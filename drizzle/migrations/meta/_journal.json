@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794578276597,
+      "tag": "0000_company_accounts_and_private_review_workflow",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794578777346,
+      "tag": "0001_restrict_company_rpc_execution_to_authenticated_accounts",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794579653641,
+      "tag": "0002_add_profile_sections_and_assistant_fields",
+      "breakpoints": true
+    }
+  ]
+}
