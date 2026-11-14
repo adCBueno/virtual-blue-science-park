@@ -187,5 +187,144 @@
     "sourceUrl": "https://www.ri.se/en",
     "schedulingLabel": "opportunity · Rolling applications",
     "eligibility": "A digital health prototype, a privacy impact assessment, and a defined clinical use case."
+  },
+  {
+    "id": "test-ai-lab",
+    "title": "AI Lab Blekinge: model sandbox",
+    "description": "Laboratory time with GPU workstations and AI coaches to prototype and evaluate a machine-learning model on your own data.",
+    "category": "Testing",
+    "technologies": [
+      "ai",
+      "iot"
+    ],
+    "industries": [],
+    "sourceLabel": "AI Lab Blekinge",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "schedulingLabel": "lab · Rolling bookings",
+    "eligibility": "A defined AI use case and a sample dataset you are allowed to share. Lab sessions are booked after a short scoping call.",
+    "uncertainty": "Simulated demo listing: the offer, dates and requirements are illustrative."
+  },
+  {
+    "id": "test-iot-security",
+    "title": "Blue Digital Testbed: IoT security test",
+    "description": "Testbed that runs your connected device against common attacks and network faults, with a findings report you can act on.",
+    "category": "Testing",
+    "technologies": [
+      "iot",
+      "sensors",
+      "automation"
+    ],
+    "industries": [],
+    "sourceLabel": "Blue Science Park",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "schedulingLabel": "testbed · next intake 9 December 2026",
+    "deadlineOn": "2026-12-09",
+    "eligibility": "A working device or gateway and its firmware version. Testing takes about two weeks.",
+    "uncertainty": "Simulated demo listing: the offer, dates and requirements are illustrative."
+  },
+  {
+    "id": "test-demo-studio",
+    "title": "Immersive demonstration studio",
+    "description": "Demonstration environment with VR/AR and a large-screen digital-twin setup to show a prototype to customers, investors and partners.",
+    "category": "Testing",
+    "technologies": [
+      "ai",
+      "automation"
+    ],
+    "industries": [],
+    "sourceLabel": "Tech Concept Lab",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "schedulingLabel": "demo · Rolling bookings",
+    "eligibility": "A demo-ready prototype, video or digital twin. Half-day or full-day slots.",
+    "uncertainty": "Simulated demo listing: the offer, dates and requirements are illustrative."
+  },
+  {
+    "id": "test-harbour-pilot",
+    "title": "Karlskrona harbour pilot programme",
+    "description": "Pilot opportunity with port and ferry operations to validate maritime monitoring and connectivity solutions in daily use.",
+    "category": "Testing",
+    "technologies": [
+      "marine",
+      "iot",
+      "sensors"
+    ],
+    "industries": [],
+    "sourceLabel": "Marine Technology Center",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "schedulingLabel": "pilot · applications close 20 January 2027",
+    "deadlineOn": "2027-01-20",
+    "eligibility": "A product ready for a three- to six-month pilot, liability insurance, and a named contact for the pilot period.",
+    "uncertainty": "Simulated demo listing: the offer, dates and requirements are illustrative."
+  },
+  {
+    "id": "test-microgrid",
+    "title": "Coastal microgrid testbed",
+    "description": "Testbed for energy storage, renewable generation and smart-grid control in a real coastal microgrid.",
+    "category": "Testing",
+    "technologies": [
+      "energy",
+      "sustainability",
+      "iot"
+    ],
+    "industries": [],
+    "sourceLabel": "RISE",
+    "sourceUrl": "https://www.ri.se/en",
+    "schedulingLabel": "testbed · Rolling applications",
+    "eligibility": "Hardware or control software with a safety assessment. Grid connection is approved case by case.",
+    "uncertainty": "Simulated demo listing: the offer, dates and requirements are illustrative."
+  },
+  {
+    "id": "test-underwater-site",
+    "title": "Archipelago underwater test site",
+    "description": "Testbed with moorings, a test pontoon and divers for underwater sensors, drones and acoustic equipment.",
+    "category": "Testing",
+    "technologies": [
+      "marine",
+      "sensors",
+      "sustainability"
+    ],
+    "industries": [],
+    "sourceLabel": "Marine Technology Center",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "schedulingLabel": "testbed · season opens 1 April 2027",
+    "eventOn": "2027-04-01",
+    "eligibility": "A marine-ready prototype and a deployment plan. Weather windows decide the final dates.",
+    "uncertainty": "Simulated demo listing: the offer, dates and requirements are illustrative."
+  },
+  {
+    "id": "test-factory-pilot",
+    "title": "Smart factory pilot line",
+    "description": "Pilot opportunity on a running production line to validate automation, machine vision or predictive maintenance with real throughput.",
+    "category": "Testing",
+    "technologies": [
+      "automation",
+      "sensors",
+      "ai"
+    ],
+    "industries": [],
+    "sourceLabel": "RISE",
+    "sourceUrl": "https://www.ri.se/en",
+    "schedulingLabel": "pilot · applications close 28 February 2027",
+    "deadlineOn": "2027-02-28",
+    "eligibility": "A solution that can run alongside production without stopping it, and a plan for measuring the result.",
+    "uncertainty": "Simulated demo listing: the offer, dates and requirements are illustrative."
+  },
+  {
+    "id": "test-home-care-lab",
+    "title": "Home-care living lab",
+    "description": "Laboratory in real homes and care settings to test remote-monitoring and assistive technology with users and care staff.",
+    "category": "Testing",
+    "technologies": [
+      "health",
+      "iot",
+      "ai"
+    ],
+    "industries": [],
+    "sourceLabel": "Blekinge Institute of Technology",
+    "sourceUrl": "https://www.bth.se/eng/",
+    "schedulingLabel": "lab · next intake 15 January 2027",
+    "deadlineOn": "2027-01-15",
+    "eligibility": "A prototype that meets basic privacy requirements and an ethics-ready test plan. User recruitment is handled by the lab.",
+    "uncertainty": "Simulated demo listing: the offer, dates and requirements are illustrative."
   }
 ]

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { services } from "@/data/services";
 import { draftFrom } from "@/lib/account";
+import opportunityFixtures from "@/data/fixtures/opportunities.json";
 
 const {
   companyRepository,
@@ -41,7 +42,7 @@ describe("fixture-backed workspace", () => {
   });
   it("retrieves the original catalogue and applies company interests when ranking", () => {
     expect(companyRepository.list()).toHaveLength(7);
-    expect(opportunityRepository.list()).toHaveLength(11);
+    expect(opportunityRepository.list()).toHaveLength(opportunityFixtures.length);
     expect(companyRepository.get("missing")).toBeUndefined();
     expect(opportunityRepository.get("missing")).toBeUndefined();
     const nord = companyRepository.list()[0];

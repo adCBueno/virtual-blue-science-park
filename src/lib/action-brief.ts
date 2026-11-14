@@ -91,8 +91,64 @@ function topicService(tags: string[], fallback: BspServiceId): BspService {
   return bspServices[fallback];
 }
 
+/** Testing opportunities come in four kinds, each with its own next step. */
+export type TestingKind = "testbed" | "laboratory" | "demonstration" | "pilot";
+export const testingKindLabels: Record<TestingKind, string> = {
+  testbed: "Testbed",
+  laboratory: "Laboratory",
+  demonstration: "Demonstration environment",
+  pilot: "Pilot opportunity",
+};
+
+export function testingKind(o: { title?: string; summary?: string; date?: string }): TestingKind {
+  const text = `${o.title ?? ""} ${o.summary ?? ""} ${o.date ?? ""}`.toLowerCase();
+  if (/\bpilot/.test(text)) return "pilot";
+  if (/\blab\b|laborator|living lab/.test(text)) return "laboratory";
+  if (/demonstrat|\bdemo\b|showroom|studio/.test(text)) return "demonstration";
+  return "testbed";
+}
+
+const testingSteps: Record<
+  TestingKind,
+  { verb: string; cta: string; steps: string[]; caveat: string }
+> = {
+  testbed: {
+    verb: "Request a test slot",
+    cta: "Testbed information",
+    steps: ["Describe the test you want to run and the result you need"],
+    caveat: "Admission is decided by the testbed after scoping.",
+  },
+  laboratory: {
+    verb: "Book lab time",
+    cta: "Lab information",
+    steps: [
+      "Prepare a sample of the data or hardware you want to test",
+      "Book a short scoping call with the lab",
+    ],
+    caveat: "Lab time is allocated after a scoping call.",
+  },
+  demonstration: {
+    verb: "Book a demonstration slot",
+    cta: "Demonstration environment",
+    steps: [
+      "Choose what you want to show and who you will invite (customers, investors, partners)",
+    ],
+    caveat: "Slots are confirmed by the host.",
+  },
+  pilot: {
+    verb: "Apply for the pilot",
+    cta: "Pilot information",
+    steps: [
+      "Agree on the pilot goal, duration and how success is measured",
+      "Name a contact person for the pilot period",
+    ],
+    caveat: "Pilot partners are selected by the host; a potential match is not a confirmed place.",
+  },
+};
+
 export function actionBrief(
-  o: Pick<Opportunity, "category" | "url" | "requirements" | "date" | "tags" | "registrationUrl">,
+  o: Pick<Opportunity, "category" | "url" | "requirements" | "date" | "tags" | "registrationUrl"> &
+    Partial<Pick<Opportunity, "title" | "summary">>,
 ): ActionBrief {
   const reqs = requirementItems(o.requirements);
   const registration = {
@@ -146,16 +202,19 @@ export function actionBrief(
       outcome: outcomeLabels.apply,
       caveat: "Potential match only — eligibility is decided by the funder, not by this service.",
     }),
-    Testing: () => ({
-      kind: "book",
-      verb: "Request a test slot",
-      headline: "Request a test slot",
-      cta: { label: "Testbed information", url: o.url, direct: false },
-      checklist: [...reqs, "Describe the test you want to run and the result you need"],
-      service: topicService(o.tags, "digital-testbed"),
-      outcome: outcomeLabels.book,
-      caveat: "Admission is decided by the testbed after scoping.",
-    }),
+    Testing: () => {
+      const t = testingSteps[testingKind(o)];
+      return {
+        kind: "book",
+        verb: t.verb,
+        headline: t.verb,
+        cta: { label: t.cta, url: o.url, direct: false },
+        checklist: [...reqs, ...t.steps],
+        service: topicService(o.tags, "digital-testbed"),
+        outcome: outcomeLabels.book,
+        caveat: t.caveat,
+      };
+    },
     Collaborations: () => ({
       kind: "intro",
       verb: "Ask for an intro",

@@ -7,7 +7,13 @@ import {
   Info,
   Ticket,
 } from "lucide-react";
-import { actionBrief, servicesNote, type ActionKind } from "@/lib/action-brief";
+import {
+  actionBrief,
+  servicesNote,
+  testingKind,
+  testingKindLabels,
+  type ActionKind,
+} from "@/lib/action-brief";
 import type { Opportunity } from "@/lib/ecosystem";
 
 const kindIcons: Record<ActionKind, typeof Ticket> = {
@@ -35,7 +41,11 @@ export function ActionBriefCard({
           <Icon />
         </span>
         <div>
-          <span className="eyebrow">ACTION BRIEF</span>
+          <span className="eyebrow">
+            ACTION BRIEF
+            {opportunity.category === "Testing" &&
+              ` · ${testingKindLabels[testingKind(opportunity)].toUpperCase()}`}
+          </span>
           <h3>{brief.headline}</h3>
         </div>
       </div>

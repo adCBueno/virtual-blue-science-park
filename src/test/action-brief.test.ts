@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { companies, opportunities } from "@/lib/ecosystem";
+import { companies, opportunities, recommendations } from "@/lib/ecosystem";
 import { actionBrief, briefEmailLines, requirementItems } from "@/lib/action-brief";
 import { demoEntries, logToCSV, statusLabel, summarize } from "@/lib/outreach-log";
 
@@ -81,5 +81,50 @@ describe("outcome tracking", () => {
 
   it("is empty-safe", () => {
     expect(summarize([]).rate).toBe(0);
+  });
+});
+
+describe("testing opportunities", () => {
+  const testing = opportunities.filter((o) => o.category === "Testing");
+
+  it("cover testbeds, laboratories, demonstration environments and pilots", async () => {
+    const { testingKind } = await import("@/lib/action-brief");
+    expect(new Set(testing.map((o) => testingKind(o)))).toEqual(
+      new Set(["testbed", "laboratory", "demonstration", "pilot"]),
+    );
+  });
+
+  it("give each kind its own next step, routed to a BSP service", async () => {
+    const { testingKind } = await import("@/lib/action-brief");
+    const verbs = Object.fromEntries(testing.map((o) => [testingKind(o), actionBrief(o).verb]));
+    expect(verbs).toEqual({
+      testbed: "Request a test slot",
+      laboratory: "Book lab time",
+      demonstration: "Book a demonstration slot",
+      pilot: "Apply for the pilot",
+    });
+    const pilot = actionBrief(byId("test-harbour-pilot"));
+    expect(pilot.checklist).toContain("Name a contact person for the pilot period");
+    expect(pilot.service.id).toBe("mtc");
+    expect(actionBrief(byId("test-ai-lab")).service.id).toBe("ai-lab");
+  });
+
+  it("match companies with different profiles and explain why", () => {
+    for (const company of companies.filter((c) => c.interests.includes("Testing"))) {
+      const matches = recommendations(company, company.interests, "Testing");
+      expect(matches.length).toBeGreaterThan(1);
+      for (const m of matches) expect(m.tags.some((t) => company.tags.includes(t))).toBe(true);
+    }
+    const nord = recommendations(
+      companies.find((c) => c.id === "nord")!,
+      [],
+      "Testing",
+    ).map((o) => o.id);
+    const pulse = recommendations(
+      companies.find((c) => c.id === "pulse")!,
+      [],
+      "Testing",
+    ).map((o) => o.id);
+    expect(nord).not.toEqual(pulse);
   });
 });

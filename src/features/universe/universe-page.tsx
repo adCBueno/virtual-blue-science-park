@@ -60,6 +60,7 @@ import { CompanyProfilePanel } from "@/components/company-profile-panel";
 import { AiAssistant } from "@/components/ai-assistant";
 import { applyProfile, canEditCompany } from "@/lib/account";
 import type { AssistantAction } from "@/lib/assistant";
+import { testingKind, testingKindLabels } from "@/lib/action-brief";
 
 type ScoredOpportunity = Opportunity & { score: number };
 type Connection = ReturnType<typeof collaborators>[number];
@@ -858,6 +859,8 @@ export function UniversePage() {
               </span>
               <span className="detail-category">
                 {detail.item.category}
+                {detail.item.category === "Testing" &&
+                  ` · ${testingKindLabels[testingKind(detail.item)]}`}
                 <span>{detail.item.score}% match</span>
               </span>
               <h2>{detail.item.title}</h2>
