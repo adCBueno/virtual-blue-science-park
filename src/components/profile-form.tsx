@@ -112,7 +112,6 @@ export function ProfileForm({ company, profile, privateProfile, preview = false,
       <Button variant="outline" disabled={busy || fields.length === 0} onClick={() => setConfirmation("publish")}><Globe2 />Publish Changes</Button>
       {onCancel && <Button variant="ghost" disabled={busy} onClick={onCancel}>Cancel</Button>}
     </div>
-    {(previewStaff || (!preview && (privateProfile || profile))) && <Button variant="outline" disabled={busy} onClick={() => void requestReview()}><Send />Send to Company</Button>}
     {message && <p role="status" className="save-message">{message}</p>}
     {error && <p role="alert" className="form-error">{error}</p>}
     {confirmation && <div className="inline-confirmation"><h3>{confirmation === "publish" ? "Publish selected information?" : "Send profile for review?"}</h3><p>{confirmation === "publish" ? `${publishable.filter(p => fields.includes(p.field)).map(p => p.label).join(", ")} will become publicly visible. Private notes will not be published.` : `Recipient: ${recipient}. This creates an in-app request, not an email. Save your draft privately before sending.`}</p><div><Button disabled={busy} onClick={() => confirmation === "publish" ? void persist(true) : void confirmSend()}>Confirm</Button><Button variant="ghost" onClick={() => setConfirmation(null)}>Cancel</Button></div></div>}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDown, ExternalLink, Globe2, Pencil, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { categories, type Company } from "@/lib/ecosystem";
@@ -15,7 +15,7 @@ function Provenance({ meta }: { meta: SectionMeta }) {
 }
 
 /** The company profile, shown inline in the focused universe: readable sections, provenance and inline editing. */
-export function CompanyProfilePanel({ company, profile, privateProfile, canEdit, isStaff, preview, previewStaff, editing, setEditing, updated, pendingReview, onClose }: {
+export function CompanyProfilePanel({ company, profile, privateProfile, canEdit, isStaff, preview, previewStaff, editing, setEditing, updated, pendingReview, onClose, digest }: {
   company: Company;
   profile?: Tables<"company_public_profiles"> | undefined;
   privateProfile?: Tables<"company_private_profiles"> | undefined;
@@ -28,6 +28,7 @@ export function CompanyProfilePanel({ company, profile, privateProfile, canEdit,
   updated: () => Promise<void>;
   pendingReview: boolean;
   onClose: () => void;
+  digest?: ReactNode;
 }) {
   const [open, setOpen] = useState<SectionKey | "evidence" | null>(null);
   const [intent, setIntent] = useState<EditorIntent>("edit");
@@ -53,13 +54,11 @@ export function CompanyProfilePanel({ company, profile, privateProfile, canEdit,
       <p className="panel-summary">{editing ? "Edit the fields below. Nothing becomes public until you publish it." : about?.body}</p>
       {!editing && canEdit && <div className="panel-actions">
         <Button variant="outline" size="sm" onClick={() => start("edit")}><Pencil />Edit Profile</Button>
-        {isStaff
-          ? <Button variant="ghost" size="sm" onClick={() => start("review")}><Send />Send to Company</Button>
-          : <Button variant="ghost" size="sm" onClick={() => start("publish")}><Globe2 />Manage Visibility</Button>}
+        {!isStaff && <Button variant="ghost" size="sm" onClick={() => start("publish")}><Globe2 />Manage Visibility</Button>}
       </div>}
     </div>
-
     <div className="panel-scroll">
+      {!editing && digest}
       {editing
         ? <ProfileForm company={company} profile={profile} privateProfile={privateProfile} preview={preview} previewStaff={previewStaff} intent={intent} updated={updated} onCancel={() => setEditing(false)} />
         : <div className="profile-accordion">

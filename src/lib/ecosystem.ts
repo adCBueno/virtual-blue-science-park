@@ -8,6 +8,8 @@ export type Company = {
 export type Opportunity = {
   id: string; title: string; category: Category; summary: string; date: string;
   source: string; url: string; requirements: string; tags: string[];
+  /** Direct registration form, when the organiser publishes one; otherwise the source page is used. */
+  registrationUrl?: string;
 };
 export const companies: [Company, Company, ...Company[]] = [
   { id: "nord", name: "Nord Sensor", mark: "nord", industry: "Intelligent sensing", sector: "Industry & engineering", description: "Turning industrial data into better decisions. Nord Sensor develops connected sensors for smarter, more sustainable production.", tags: ["sensors", "automation", "iot"], interests: ["Testing", "Collaborations"], x: 30, y: 28, tone: "blue" },
@@ -43,4 +45,35 @@ export function recommendations(company: Company, interests: Category[], categor
 export function collaborators(company: Company) {
   return companies.filter(c => c.id !== company.id).map(c => ({ ...c, shared: c.tags.filter(t => company.tags.includes(t)) }))
     .filter(c => c.shared.length > 0).sort((a, b) => b.shared.length - a.shared.length).slice(0, 2);
+}
+/**
+ * Thematic fit, not a probability: a deterministic score from shared expertise tags and stated
+ * interests. It never implies eligibility — requirements must be checked at the source.
+ */
+export type FitLevel = "Strong" | "Good" | "Possible";
+export function fitLevel(score: number): FitLevel {
+  return score >= 85 ? "Strong" : score >= 75 ? "Good" : "Possible";
+}
+export function fitLabel(score: number) {
+  return `${fitLevel(score)} thematic fit`;
+}
+
+export type CompanyFit = { company: Company; score: number; shared: string[]; priority: boolean };
+/** Reverse matching: for one opportunity, which companies does it fit, and why? */
+export function companiesFor(opportunity: Pick<Opportunity, "tags" | "category">, companyList: Company[] = companies): CompanyFit[] {
+  return companyList
+    .map(company => ({
+      company,
+      shared: opportunity.tags.filter(t => company.tags.includes(t)),
+      priority: company.interests.includes(opportunity.category),
+      score: relevance(company, opportunity.tags, opportunity.category, company.interests),
+    }))
+    .filter(f => f.shared.length > 0)
+    .sort((a, b) => b.score - a.score || Number(b.priority) - Number(a.priority));
+}
+
+/** One plain sentence explaining a fit, reused by the panel, the email and the export. */
+export function fitReason(fit: Pick<CompanyFit, "shared" | "priority">, category: Category) {
+  const shared = fit.shared.join(", ");
+  return `Shares ${shared}${fit.priority ? ` · ${category.toLowerCase()} is a stated priority` : ""}`;
 }
