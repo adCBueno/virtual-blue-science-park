@@ -45,6 +45,7 @@ export function CompanyProfilePanel({
   updated,
   pendingReview,
   digest,
+  replacement,
   onClose,
 }: {
   company: Company;
@@ -58,6 +59,8 @@ export function CompanyProfilePanel({
   updated: () => Promise<void>;
   pendingReview: boolean;
   digest?: ReactNode;
+  /** Opportunity details or reverse matching, drawn inside this same panel instead of a new one. */
+  replacement?: ReactNode;
   onClose: () => void;
 }) {
   const [intent, setIntent] = useState<EditorIntent>("edit");
@@ -80,6 +83,13 @@ export function CompanyProfilePanel({
     setIntent(next);
     setEditing(true);
   };
+
+  if (replacement)
+    return (
+      <aside className="company-overview profile-panel is-replaced" aria-label="Details">
+        <div className="panel-scroll">{replacement}</div>
+      </aside>
+    );
 
   return (
     <aside

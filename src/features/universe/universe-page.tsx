@@ -228,9 +228,6 @@ export function UniversePage() {
     }
   };
   const representativeCompanyId = account?.role === "representative" ? account.companyId : null;
-  const ownCompany = representativeCompanyId
-    ? companyList.find((c) => c.id === representativeCompanyId)
-    : undefined;
   useEffect(() => {
     if (representativeCompanyId && companyRepository.get(representativeCompanyId))
       setSelectedId(representativeCompanyId);
@@ -279,6 +276,199 @@ export function UniversePage() {
       <ExportMenu compact={isMobile} getReport={() => reportFor(focusedCompany)} />
     </span>
   );
+  /* On the map (desktop), details and reverse matching are drawn inside the company panel itself,
+     so only one side panel is ever open. Elsewhere they use their own panel on the left. */
+  const inlinePanels = view === "universe" && Boolean(selected) && !isMobile;
+  const renderDetail = (inline: boolean) => {
+    if (!detail || !selected) return null;
+    const DetailTag = inline ? "section" : "aside";
+    return (
+      <DetailTag
+        className={`detail-panel ${inline ? "side-content" : ""}`}
+        aria-label="Connection details"
+      >
+        <div className="detail-top">
+          <span className="eyebrow">
+            {detail.kind === "opportunity" ? "YOUR NEXT OPPORTUNITY" : "A POTENTIAL CONNECTION"}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Close details"
+            onClick={() => setDetail(null)}
+          >
+            <X />
+          </Button>
+        </div>
+        {detail.kind === "opportunity" ? (
+          <>
+            <span className={`detail-icon category-${detail.item.category.toLowerCase()}`}>
+              {(() => {
+                const Icon = icons[detail.item.category];
+                return <Icon />;
+              })()}
+            </span>
+            <span className="detail-category">
+              {detail.item.category}
+              {detail.item.category === "Testing" &&
+                ` · ${testingKindLabels[testingKind(detail.item)]}`}
+              <span>{detail.item.score}% match</span>
+            </span>
+            <h2>{detail.item.title}</h2>
+            <p>{detail.item.summary}</p>
+            <div className="why-match">
+              <Sparkles size={17} />
+              <div>
+                <h3>Why it’s relevant to {(focusedCompany ?? selected).name}</h3>
+                {detail.item.why ? (
+                  <>
+                    <p>{detail.item.why}</p>
+                    {detail.item.caveats && <p className="match-caveats">{detail.item.caveats}</p>}
+                  </>
+                ) : (
+                  <p>
+                    Your expertise in{" "}
+                    {detail.item.tags
+                      .filter((t) => (focusedCompany ?? selected).tags.includes(t))
+                      .join(" and ")}{" "}
+                    aligns with this opportunity.
+                    {interests.includes(detail.item.category)
+                      ? ` It also matches your ${detail.item.category.toLowerCase()} priority.`
+                      : " It opens a complementary path for your next stage of growth."}
+                  </p>
+                )}
+              </div>
+            </div>
+            <dl>
+              <div>
+                <dt>
+                  <CalendarDays size={15} />
+                  Date
+                </dt>
+                <dd>{detail.item.date}</dd>
+              </div>
+              <div>
+                <dt>
+                  <Globe2 size={15} />
+                  Source
+                </dt>
+                <dd>{detail.item.source}</dd>
+              </div>
+              <div>
+                <dt>
+                  <Check size={15} />
+                  Requirements
+                </dt>
+                <dd>{detail.item.requirements}</dd>
+              </div>
+            </dl>
+            <ActionBriefCard opportunity={detail.item} />
+            {staff && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setMatchFor(detail.item as ScoredOpportunity);
+                  setDetail(null);
+                }}
+              >
+                Find all companies that fit
+              </Button>
+            )}
+            <span className="detail-demo">
+              Dates and requirements are not verified. Source links lead to the organisation’s
+              website.
+            </span>
+            <Button asChild className="source-button">
+              <a href={detail.item.url} target="_blank" rel="noreferrer">
+                Visit information source
+                <ExternalLink />
+              </a>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                setSaved((s) =>
+                  s.includes(detail.item.id)
+                    ? s.filter((id) => id !== detail.item.id)
+                    : [...s, detail.item.id],
+                )
+              }
+            >
+              {saved.includes(detail.item.id) ? <Check /> : <Bookmark />}
+              {saved.includes(detail.item.id) ? "Saved for this session" : "Save opportunity"}
+            </Button>
+            <OpportunityFeedback opportunityId={detail.item.id} />
+          </>
+        ) : (
+          <>
+            <div className={`collaborator-mark tone-${detail.item.tone}`}>
+              <CompanyMark company={detail.item} />
+            </div>
+            <span className="suggested-badge">
+              <Sparkles size={12} />
+              Suggested · Not a confirmed partnership
+            </span>
+            <h2>
+              {selected.name}
+              <span className="connection-pair">
+                <ArrowRight />
+                {detail.item.name}
+              </span>
+            </h2>
+            <p>{detail.item.description}</p>
+            <div className="why-match">
+              <Handshake size={19} />
+              <div>
+                <h3>Complementary by nature</h3>
+                <p>
+                  Both companies work with {detail.item.shared.join(" and ")}. {selected.name}{" "}
+                  brings {selected.industry.toLowerCase()} expertise, while {detail.item.name} adds{" "}
+                  {detail.item.industry.toLowerCase()} capabilities.
+                </p>
+              </div>
+            </div>
+            <h3 className="detail-subheading">What you could build together</h3>
+            <p>
+              A joint pilot combining your technology with {detail.item.name}’s expertise. Start
+              with a shared validation challenge, exchange data and insights, and explore a
+              co-developed prototype.
+            </p>
+            <h3 className="detail-subheading">Why this connection is suggested</h3>
+            <p>
+              Matching identified {detail.item.shared.length} shared expertise areas and
+              complementary specialisms. This is a rule-based suggestion, not a live AI
+              recommendation.
+            </p>
+            <Button onClick={() => focus(detail.item)}>
+              Explore {detail.item.name}
+              <ArrowUpRight />
+            </Button>
+          </>
+        )}
+        <Button variant="ghost" className="return-link" onClick={() => setDetail(null)}>
+          <ArrowLeft />
+          Return to company ecosystem
+        </Button>
+      </DetailTag>
+    );
+  };
+
+  const matchPanel = (inline: boolean) =>
+    matchFor && account ? (
+      <OpportunityMatchPanel
+        inline={inline}
+        key={matchFor.id}
+        opportunity={matchFor}
+        companies={companyList}
+        sender={account.name}
+        onClose={() => setMatchFor(null)}
+        onFocusCompany={(company) => {
+          setMatchFor(null);
+          focus(company);
+        }}
+      />
+    ) : null;
+
   return (
     <div
       className={`app-shell fullscreen-ecosystem ${view !== "universe" ? "directory-view" : ""} ${selected ? "company-focused" : ""} ${editing ? "profile-editing" : ""} ${chatOpen ? "chat-open" : ""}`}
@@ -378,32 +568,6 @@ export function UniversePage() {
                 ? `Explore the people and possibilities around ${focusedCompany.name}.`
                 : "Discover companies, connect expertise, and find what’s next."}
             </p>
-          </div>
-          <div className="view-switch" role="tablist" aria-label="Choose what the map shows">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={!selected}
-              data-active={!selected}
-              onClick={() => selected && back()}
-            >
-              <Globe2 size={14} /> Whole park
-              <small>{companyList.length} companies</small>
-            </button>
-            {(focusedCompany ?? ownCompany) && (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={Boolean(selected)}
-                data-active={Boolean(selected)}
-                className={`tone-${(focusedCompany ?? ownCompany)!.tone}`}
-                onClick={() => !selected && ownCompany && focus(ownCompany)}
-              >
-                <span className="view-dot" aria-hidden="true" />
-                {(focusedCompany ?? ownCompany)!.name}
-                <small>{selected ? "its opportunities & connections" : "your company view"}</small>
-              </button>
-            )}
           </div>
           <div className="ecosystem-location">
             <MapPin size={15} /> Karlskrona, Sweden{" "}
@@ -548,6 +712,15 @@ export function UniversePage() {
               {selected && (
                 <CompanyProfilePanel
                   key={selected.id}
+                  replacement={
+                    !inlinePanels
+                      ? undefined
+                      : detail
+                        ? renderDetail(true)
+                        : staff && matchFor
+                          ? matchPanel(true)
+                          : undefined
+                  }
                   company={focusedCompany ?? selected}
                   profile={publicProfiles.find((p) => p.company_id === selected.id)}
                   privateProfile={accessiblePrivate}
@@ -834,174 +1007,7 @@ export function UniversePage() {
         </section>
       </main>
 
-      {detail && selected && (
-        <aside className="detail-panel" aria-label="Connection details">
-          <div className="detail-top">
-            <span className="eyebrow">
-              {detail.kind === "opportunity" ? "YOUR NEXT OPPORTUNITY" : "A POTENTIAL CONNECTION"}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Close details"
-              onClick={() => setDetail(null)}
-            >
-              <X />
-            </Button>
-          </div>
-          {detail.kind === "opportunity" ? (
-            <>
-              <span className={`detail-icon category-${detail.item.category.toLowerCase()}`}>
-                {(() => {
-                  const Icon = icons[detail.item.category];
-                  return <Icon />;
-                })()}
-              </span>
-              <span className="detail-category">
-                {detail.item.category}
-                {detail.item.category === "Testing" &&
-                  ` · ${testingKindLabels[testingKind(detail.item)]}`}
-                <span>{detail.item.score}% match</span>
-              </span>
-              <h2>{detail.item.title}</h2>
-              <p>{detail.item.summary}</p>
-              <div className="why-match">
-                <Sparkles size={17} />
-                <div>
-                  <h3>Why it’s relevant to {(focusedCompany ?? selected).name}</h3>
-                  {detail.item.why ? (
-                    <>
-                      <p>{detail.item.why}</p>
-                      {detail.item.caveats && (
-                        <p className="match-caveats">{detail.item.caveats}</p>
-                      )}
-                    </>
-                  ) : (
-                    <p>
-                      Your expertise in{" "}
-                      {detail.item.tags
-                        .filter((t) => (focusedCompany ?? selected).tags.includes(t))
-                        .join(" and ")}{" "}
-                      aligns with this opportunity.
-                      {interests.includes(detail.item.category)
-                        ? ` It also matches your ${detail.item.category.toLowerCase()} priority.`
-                        : " It opens a complementary path for your next stage of growth."}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <dl>
-                <div>
-                  <dt>
-                    <CalendarDays size={15} />
-                    Date
-                  </dt>
-                  <dd>{detail.item.date}</dd>
-                </div>
-                <div>
-                  <dt>
-                    <Globe2 size={15} />
-                    Source
-                  </dt>
-                  <dd>{detail.item.source}</dd>
-                </div>
-                <div>
-                  <dt>
-                    <Check size={15} />
-                    Requirements
-                  </dt>
-                  <dd>{detail.item.requirements}</dd>
-                </div>
-              </dl>
-              <ActionBriefCard opportunity={detail.item} />
-              {staff && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setMatchFor(detail.item as ScoredOpportunity);
-                    setDetail(null);
-                  }}
-                >
-                  Find all companies that fit
-                </Button>
-              )}
-              <span className="detail-demo">
-                Dates and requirements are not verified. Source links lead to the organisation’s
-                website.
-              </span>
-              <Button asChild className="source-button">
-                <a href={detail.item.url} target="_blank" rel="noreferrer">
-                  Visit information source
-                  <ExternalLink />
-                </a>
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  setSaved((s) =>
-                    s.includes(detail.item.id)
-                      ? s.filter((id) => id !== detail.item.id)
-                      : [...s, detail.item.id],
-                  )
-                }
-              >
-                {saved.includes(detail.item.id) ? <Check /> : <Bookmark />}
-                {saved.includes(detail.item.id) ? "Saved for this session" : "Save opportunity"}
-              </Button>
-              <OpportunityFeedback opportunityId={detail.item.id} />
-            </>
-          ) : (
-            <>
-              <div className={`collaborator-mark tone-${detail.item.tone}`}>
-                <CompanyMark company={detail.item} />
-              </div>
-              <span className="suggested-badge">
-                <Sparkles size={12} />
-                Suggested · Not a confirmed partnership
-              </span>
-              <h2>
-                {selected.name}
-                <span className="connection-pair">
-                  <ArrowRight />
-                  {detail.item.name}
-                </span>
-              </h2>
-              <p>{detail.item.description}</p>
-              <div className="why-match">
-                <Handshake size={19} />
-                <div>
-                  <h3>Complementary by nature</h3>
-                  <p>
-                    Both companies work with {detail.item.shared.join(" and ")}. {selected.name}{" "}
-                    brings {selected.industry.toLowerCase()} expertise, while {detail.item.name}{" "}
-                    adds {detail.item.industry.toLowerCase()} capabilities.
-                  </p>
-                </div>
-              </div>
-              <h3 className="detail-subheading">What you could build together</h3>
-              <p>
-                A joint pilot combining your technology with {detail.item.name}’s expertise. Start
-                with a shared validation challenge, exchange data and insights, and explore a
-                co-developed prototype.
-              </p>
-              <h3 className="detail-subheading">Why this connection is suggested</h3>
-              <p>
-                Matching identified {detail.item.shared.length} shared expertise areas and
-                complementary specialisms. This is a rule-based suggestion, not a live AI
-                recommendation.
-              </p>
-              <Button onClick={() => focus(detail.item)}>
-                Explore {detail.item.name}
-                <ArrowUpRight />
-              </Button>
-            </>
-          )}
-          <Button variant="ghost" className="return-link" onClick={() => setDetail(null)}>
-            <ArrowLeft />
-            Return to company ecosystem
-          </Button>
-        </aside>
-      )}
+      {!inlinePanels && renderDetail(false)}
 
       {view === "universe" && profileOpen && selected && (
         <CompanyEditor
@@ -1017,19 +1023,7 @@ export function UniversePage() {
           canRequestReview={account?.role === "staff"}
         />
       )}
-      {staff && matchFor && (
-        <OpportunityMatchPanel
-          key={matchFor.id}
-          opportunity={matchFor}
-          companies={companyList}
-          sender={account.name}
-          onClose={() => setMatchFor(null)}
-          onFocusCompany={(company) => {
-            setMatchFor(null);
-            focus(company);
-          }}
-        />
-      )}
+      {staff && matchFor && !inlinePanels && matchPanel(false)}
       <AiAssistant
         key={account?.id ?? "guest"}
         company={focusedCompany ?? selected}

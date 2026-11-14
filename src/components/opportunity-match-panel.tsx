@@ -66,7 +66,10 @@ export function OpportunityMatchPanel({
   sender,
   onClose,
   onFocusCompany,
+  inline = false,
 }: {
+  /** Drawn inside the company panel (map view) instead of as its own side panel. */
+  inline?: boolean;
   opportunity: Opportunity;
   companies: Company[];
   sender: string;
@@ -112,6 +115,7 @@ export function OpportunityMatchPanel({
   /* Switching between ranking and emails only changes the section below the brief:
      keep the panel where it is and bring that section into view, instead of jumping to the top. */
   const panelRef = useRef<HTMLElement>(null);
+  const Root = inline ? "section" : "aside";
   const stepRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
   useEffect(() => {
@@ -123,16 +127,20 @@ export function OpportunityMatchPanel({
     const section = stepRef.current;
     if (!panel || !section) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (inline) {
+      section.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
+      return;
+    }
     panel.scrollTo({
       top: Math.max(0, section.offsetTop - 12),
       behavior: reduce ? "auto" : "smooth",
     });
-  }, [step]);
+  }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <aside
+    <Root
       ref={panelRef}
-      className="detail-panel match-panel"
+      className={`detail-panel match-panel ${inline ? "side-content" : ""}`}
       aria-label={`Companies that fit ${opportunity.title}`}
     >
       <div className="detail-top">
@@ -339,6 +347,6 @@ export function OpportunityMatchPanel({
           </>
         )}
       </div>
-    </aside>
+    </Root>
   );
 }
