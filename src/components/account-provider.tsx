@@ -11,7 +11,6 @@ function snapshot() {
   const reviews = reviewService.list();
   return {
     account: authService.currentUser(),
-    isPreview: authService.isPreview(),
     publicProfiles: companyRepository.publicProfiles().map((profile) => ({
       ...profileRecord(profile),
       provenance: Object.keys(profile.evidence).length
@@ -42,7 +41,6 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   const [workspace, setWorkspace] = useState<ReturnType<typeof snapshot>>(() => ({
     ...snapshot(),
     account: null,
-    isPreview: false,
     privateProfiles: [],
     reviews: [],
     publicProfiles: companyRepository.baselineProfiles().map((profile) => ({

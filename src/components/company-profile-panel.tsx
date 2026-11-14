@@ -11,6 +11,7 @@ import {
   type SectionKey,
   type SectionMeta,
 } from "@/lib/profile-sections";
+import { review as reviewService } from "@/data/services";
 import { ProfileForm, type EditorIntent } from "@/components/profile-form";
 
 function Provenance({ meta }: { meta: SectionMeta }) {
@@ -38,8 +39,7 @@ export function CompanyProfilePanel({
   privateProfile,
   canEdit,
   isStaff,
-  preview,
-  previewStaff,
+  canRequestReview,
   editing,
   setEditing,
   updated,
@@ -51,8 +51,7 @@ export function CompanyProfilePanel({
   privateProfile?: PrivateProfileRecord | undefined;
   canEdit: boolean;
   isStaff: boolean;
-  preview: boolean;
-  previewStaff: boolean;
+  canRequestReview: boolean;
   editing: boolean;
   setEditing: (editing: boolean) => void;
   updated: () => Promise<void>;
@@ -91,13 +90,7 @@ export function CompanyProfilePanel({
     >
       <div className="panel-head">
         <div className="panel-top">
-          <span className="eyebrow">
-            {editing
-              ? preview
-                ? "SIMULATED ROLE PREVIEW"
-                : "EDITING PROFILE"
-              : "COMPANY IN FOCUS"}
-          </span>
+          <span className="eyebrow">{editing ? "EDITING PROFILE" : "COMPANY IN FOCUS"}</span>
           <Button
             variant="ghost"
             size="icon"
@@ -121,7 +114,14 @@ export function CompanyProfilePanel({
               Edit Profile
             </Button>
             {isStaff ? (
-              <Button variant="ghost" size="sm" onClick={() => start("review")}>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={
+                  !privateProfile || pendingReview || !reviewService.resolveRecipient(company.id)
+                }
+                onClick={() => start("review")}
+              >
                 <Send />
                 Send to Company
               </Button>
@@ -142,8 +142,8 @@ export function CompanyProfilePanel({
             company={company}
             profile={profile}
             privateProfile={privateProfile}
-            preview={preview}
-            previewStaff={previewStaff}
+            canRequestReview={canRequestReview}
+            pendingReview={pendingReview}
             intent={intent}
             updated={updated}
             onCancel={() => setEditing(false)}

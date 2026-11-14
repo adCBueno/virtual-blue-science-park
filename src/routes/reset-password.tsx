@@ -28,12 +28,14 @@ function Reset() {
   useEffect(() => {
     setValid(new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery");
   }, []);
+  const canSubmit = valid && password.length >= 8 && password === confirm;
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (password !== confirm) {
       setMessage("Passwords do not match.");
       return;
     }
+    if (busy || !canSubmit) return;
     setBusy(true);
     setDone(true);
     setBusy(false);
@@ -79,7 +81,7 @@ function Reset() {
                 {message}
               </p>
             )}
-            <Button type="submit" disabled={busy}>
+            <Button type="submit" disabled={busy || !canSubmit}>
               Update password
             </Button>
           </form>

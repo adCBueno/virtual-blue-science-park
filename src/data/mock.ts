@@ -8,7 +8,7 @@ import {
   userSchema,
 } from "@/contracts/ecosystem";
 import { catalogue } from "./catalogue";
-import usersJson from "./fixtures/demo-users.json";
+import usersJson from "./fixtures/users.json";
 import type {
   CompanyProfile,
   PrivateCompanyProfile,
@@ -46,7 +46,10 @@ function read(): State {
   if (typeof window === "undefined") return initial();
   try {
     const value = window.sessionStorage.getItem(storageKey);
-    if (value) return stateSchema.parse(JSON.parse(value));
+    if (value) {
+      const state = stateSchema.parse(JSON.parse(value));
+      return state.preview ? { ...state, userId: null } : state;
+    }
   } catch {
     /* Continue with in-memory demo state. */
   }
@@ -211,15 +214,6 @@ export const recommendationService = { recommendations, collaborators };
 
 export const authService = {
   currentUser: () => actor(read()),
-  isPreview: () => read().preview,
-  preview(role: "guest" | "representative" | "staff") {
-    const state = read();
-    write({
-      ...state,
-      preview: true,
-      userId: users.find((user) => user.role === role)?.id ?? null,
-    });
-  },
   signIn(email: string) {
     const user = users.find((item) => email.trim().toLowerCase() === `${item.id}@example.test`);
     if (!user) throw new Error("Use demo-nord@example.test or demo-staff@example.test.");

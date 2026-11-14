@@ -1,3 +1,4 @@
+import { UniverseNode } from "./universe-node";
 import { OpportunityDirectory } from "@/features/opportunities/opportunity-directory";
 import { opportunityIcons as icons } from "@/features/opportunities/opportunity-icons";
 import { Link } from "@tanstack/react-router";
@@ -41,7 +42,6 @@ import {
 } from "@/lib/ecosystem";
 
 import {
-  auth as authService,
   company as companyRepository,
   recommendation as recommendationService,
 } from "@/data/services";
@@ -103,14 +103,10 @@ function CompanyMark({ company }: { company: Company }) {
 
 export function UniversePage() {
   const isMobile = useIsMobile();
-  const { account, isPreview, privateProfiles, publicProfiles, reviews, refresh, signOut } =
-    useAccount();
+  const { account, privateProfiles, publicProfiles, reviews, refresh, signOut } = useAccount();
   const [staffOpen, setStaffOpen] = useState(false);
   const [staffSearch, setStaffSearch] = useState("");
   const [opportunitySearch, setOpportunitySearch] = useState("");
-  const previewRole =
-    account?.role === "staff" || account?.role === "representative" ? account.role : "guest";
-  const previewAccount = isPreview ? account : null;
   const displayAccount = account;
   const companyList = companyRepository.list().map((c) =>
     applyProfile(
@@ -238,30 +234,6 @@ export function UniversePage() {
   ).filter((o) =>
     `${o.title} ${o.category} ${o.source}`.toLowerCase().includes(opportunitySearch.toLowerCase()),
   );
-  const roleSwitch = (placement = "") =>
-    (!account || isPreview) && (
-      <label className={`demo-role-switch ${placement}`}>
-        Demo role preview
-        <select
-          aria-label="Demo role preview"
-          value={previewRole}
-          onChange={(e) => {
-            authService.preview(e.target.value as typeof previewRole);
-            void refresh();
-            setEditing(false);
-            setSaved([]);
-            setProfileOpen(false);
-            setStaffOpen(false);
-          }}
-        >
-          <option value="guest">Public visitor</option>
-          <option value="representative">Company representative</option>
-          <option value="staff">Park staff</option>
-        </select>
-        <small>Simulated · no real permissions</small>
-      </label>
-    );
-
   return (
     <div
       className={`app-shell fullscreen-ecosystem ${view === "opportunities" ? "directory-view" : ""} ${selected ? "company-focused" : ""} ${editing ? "profile-editing" : ""} ${chatOpen ? "chat-open" : ""}`}
@@ -303,7 +275,7 @@ export function UniversePage() {
           )}
         </nav>
         <div className="account">
-          {account && !isPreview ? (
+          {account ? (
             <>
               <span className="account-label">
                 {account.name}
@@ -424,7 +396,6 @@ export function UniversePage() {
               <span className="eyebrow">COMPANY IN FOCUS</span>
               <h2>{focusedCompany?.name ?? selected.name}</h2>
               <span className="industry-label">{selected.industry}</span>
-              {roleSwitch("focus-role-switch")}
               <div className="focus-tabs" role="tablist" aria-label="Company view">
                 <button
                   type="button"
@@ -474,8 +445,7 @@ export function UniversePage() {
                   privateProfile={accessiblePrivate}
                   canEdit={canEditCompany(displayAccount, selected.id)}
                   isStaff={displayAccount?.role === "staff"}
-                  preview={Boolean(previewAccount)}
-                  previewStaff={account?.role === "staff"}
+                  canRequestReview={account?.role === "staff"}
                   editing={editing}
                   setEditing={setEditing}
                   updated={updated}
@@ -559,34 +529,29 @@ export function UniversePage() {
 
                 {!selected
                   ? visibleCompanies.map((company, index) => (
-                      <div
+                      <UniverseNode
                         key={company.id}
-                        className={`positioned-node company-position tone-${company.tone}`}
-                        style={
-                          {
-                            "--node-x": `${companySlot(company, index).x}%`,
-                            "--node-y": `${companySlot(company, index).y}%`,
-                            "--float-delay": `${index * -0.8}s`,
-                          } as React.CSSProperties
+                        position={companySlot(company, index)}
+                        floatDelay={index * -0.8}
+                        className={`company-position tone-${company.tone}`}
+                        buttonClassName="company-node"
+                        label={`Explore ${company.name}`}
+                        onClick={() => focus(company)}
+                        icon={
+                          <>
+                            <CompanyMark company={company} />
+                            <span className="node-open">
+                              <ArrowUpRight size={13} />
+                            </span>
+                          </>
                         }
                       >
-                        <Button
-                          variant="node"
-                          className="company-node"
-                          aria-label={`Explore ${company.name}`}
-                          onClick={() => focus(company)}
-                        >
-                          <CompanyMark company={company} />
-                          <span className="node-open">
-                            <ArrowUpRight size={13} />
-                          </span>
-                        </Button>
                         <span className="node-company-name">{company.name}</span>
                         <span className="node-industry">{company.industry}</span>
                         <span className="company-hover">
                           Explore company <ArrowRight size={12} />
                         </span>
-                      </div>
+                      </UniverseNode>
                     ))
                   : nodes.map((node, index) => {
                       const prominent =
@@ -600,37 +565,32 @@ export function UniversePage() {
                       const Icon =
                         node.kind === "opportunity" ? icons[node.item.category] : Handshake;
                       return (
-                        <div
+                        <UniverseNode
                           key={node.item.id}
-                          className={`positioned-node opportunity-position ${prominent ? "is-priority" : ""} ${lit ? "is-highlighted" : ""} ${detail?.item.id === node.item.id ? "node-selected" : ""}`}
-                          style={
-                            {
-                              "--node-x": `${slot.x}%`,
-                              "--node-y": `${slot.y}%`,
-                              "--float-delay": `${index * -1.2}s`,
-                            } as React.CSSProperties
+                          position={slot}
+                          floatDelay={index * -1.2}
+                          className={`opportunity-position ${prominent ? "is-priority" : ""} ${lit ? "is-highlighted" : ""} ${detail?.item.id === node.item.id ? "node-selected" : ""}`}
+                          buttonClassName={`opportunity-node ${node.kind === "opportunity" ? `category-${node.item.category.toLowerCase()}` : "category-collaborations"}`}
+                          label={
+                            node.kind === "opportunity"
+                              ? `View ${node.item.title}`
+                              : `Explore collaboration with ${node.item.name}`
+                          }
+                          onClick={() => {
+                            setDetail(node);
+                            setChatOpen(false);
+                          }}
+                          icon={
+                            <>
+                              <Icon />
+                              {prominent && (
+                                <span className="priority-spark">
+                                  <Sparkles size={11} />
+                                </span>
+                              )}
+                            </>
                           }
                         >
-                          <Button
-                            variant="node"
-                            className={`opportunity-node ${node.kind === "opportunity" ? `category-${node.item.category.toLowerCase()}` : "category-collaborations"}`}
-                            aria-label={
-                              node.kind === "opportunity"
-                                ? `View ${node.item.title}`
-                                : `Explore collaboration with ${node.item.name}`
-                            }
-                            onClick={() => {
-                              setDetail(node);
-                              setChatOpen(false);
-                            }}
-                          >
-                            <Icon />
-                            {prominent && (
-                              <span className="priority-spark">
-                                <Sparkles size={11} />
-                              </span>
-                            )}
-                          </Button>
                           <span className="node-category">
                             {node.kind === "opportunity"
                               ? node.item.category
@@ -644,7 +604,7 @@ export function UniversePage() {
                               ? `${node.item.score}% match · ${node.item.source}`
                               : `${node.item.shared.length} shared areas of expertise`}
                           </span>
-                        </div>
+                        </UniverseNode>
                       );
                     })}
                 {!selected && visibleCompanies.length === 0 && (
@@ -894,18 +854,18 @@ export function UniversePage() {
           company={focusedCompany ?? selected}
           profile={publicProfiles.find((p) => p.company_id === selected.id)}
           privateProfile={accessiblePrivate}
+          pendingReview={reviews.some(
+            (review) => review.companyId === selected.id && review.status === "pending",
+          )}
           close={() => setProfileOpen(false)}
           updated={updated}
-          preview={Boolean(previewAccount)}
-          previewStaff={account?.role === "staff"}
+          canRequestReview={account?.role === "staff"}
         />
       )}
       {staffOpen && displayAccount?.role === "staff" && (
         <aside className="detail-panel staff-workspace" aria-label="Staff workspace">
           <div className="detail-top">
-            <span className="eyebrow">
-              {previewAccount ? "SIMULATED STAFF PREVIEW" : "BLUE SCIENCE PARK STAFF"}
-            </span>
+            <span className="eyebrow">BLUE SCIENCE PARK STAFF</span>
             <Button
               variant="ghost"
               size="icon"
@@ -958,7 +918,6 @@ export function UniversePage() {
             })}
         </aside>
       )}
-      {roleSwitch()}
       <AiAssistant
         key={account?.id ?? "guest"}
         company={focusedCompany ?? selected}

@@ -16,6 +16,31 @@ const {
 beforeEach(() => authService.reset());
 
 describe("fixture-backed workspace", () => {
+  it("defaults to public access and grants roles through known demo logins", () => {
+    expect(authService.currentUser()).toBeNull();
+    expect(() => authService.signIn("unknown@example.test")).toThrow();
+    expect(authService.currentUser()).toBeNull();
+    authService.signIn("demo-nord@example.test");
+    expect(authService.currentUser()).toMatchObject({ role: "representative", companyId: "nord" });
+    authService.signIn("demo-staff@example.test");
+    expect(authService.currentUser()).toMatchObject({ role: "staff", companyId: null });
+    authService.signOut();
+    expect(authService.currentUser()).toBeNull();
+  });
+
+  it("treats a saved role preview as public access", () => {
+    sessionStorage.setItem(
+      "bsp-demo-workspace",
+      JSON.stringify({
+        userId: "demo-staff",
+        preview: true,
+        published: [],
+        drafts: [],
+        requests: [],
+      }),
+    );
+    expect(authService.currentUser()).toBeNull();
+  });
   it("retrieves the original catalogue and applies company interests when ranking", () => {
     expect(companyRepository.list()).toHaveLength(7);
     expect(opportunityRepository.list()).toHaveLength(11);
@@ -39,7 +64,7 @@ describe("fixture-backed workspace", () => {
       private_notes: "Staff note",
     };
     expect(() => companyRepository.save(nord.id, draft, [])).toThrow();
-    authService.preview("representative");
+    authService.signIn("demo-nord@example.test");
     expect(() => companyRepository.save(ocean.id, draft, [])).toThrow();
     companyRepository.save(nord.id, draft, []);
     expect(companyRepository.privateProfiles()[0]?.privateNotes).toBe("Staff note");
@@ -52,7 +77,7 @@ describe("fixture-backed workspace", () => {
         })
       ).answer,
     ).toContain("Private draft");
-    authService.preview("guest");
+    authService.signOut();
     expect(companyRepository.privateProfiles()).toEqual([]);
     expect(
       (
@@ -63,9 +88,9 @@ describe("fixture-backed workspace", () => {
         })
       ).answer,
     ).not.toContain("Private draft");
-    authService.preview("representative");
+    authService.signIn("demo-nord@example.test");
     companyRepository.save(nord.id, draft, ["description"]);
-    authService.preview("guest");
+    authService.signOut();
     const published = companyRepository
       .publicProfiles()
       .find((profile) => profile.companyId === nord.id);
@@ -76,14 +101,14 @@ describe("fixture-backed workspace", () => {
   it("creates in-app requests only for staff and exposes them to the recipient", () => {
     const nord = companyRepository.list()[0];
     expect(() => reviewService.request(nord.id)).toThrow();
-    authService.preview("staff");
+    authService.signIn("demo-staff@example.test");
     expect(() => reviewService.request(nord.id)).toThrow("Save your draft");
     companyRepository.save(nord.id, draftFrom(nord), []);
     const request = reviewService.request(nord.id);
     expect(() => reviewService.request(nord.id)).toThrow("already pending");
-    authService.preview("guest");
+    authService.signOut();
     expect(reviewService.list()).toEqual([]);
-    authService.preview("representative");
+    authService.signIn("demo-nord@example.test");
     expect(reviewService.list()).toEqual([request]);
   });
 

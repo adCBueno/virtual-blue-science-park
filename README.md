@@ -18,8 +18,7 @@ For verification, run `bun run lint`, `bun run test`, `bun run build`, and
 
 ## Demo workspace
 
-Use the role selector to explore as a visitor, the Nord Sensor representative,
-or park staff. The login screen also accepts `demo-nord@example.test` and
+The site opens in public visitor mode. To enter the company or staff view, use `demo-nord@example.test` and
 `demo-staff@example.test` with the password field blank. Recovery is simulated.
 Accounts, private drafts, published edits, and in-app reviews last for the
 browser tab's session. To reset the demo, clear this site's session storage or

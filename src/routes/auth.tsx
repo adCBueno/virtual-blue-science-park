@@ -27,6 +27,7 @@ export const Route = createFileRoute("/auth")({
 });
 function Auth() {
   const [email, setEmail] = useState("");
+  const [validEmail, setValidEmail] = useState(false);
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -37,6 +38,7 @@ function Auth() {
   const { refresh } = useAccount();
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    if (busy || !validEmail) return;
     setBusy(true);
     setError("");
     try {
@@ -79,7 +81,10 @@ function Auth() {
                 autoComplete="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.currentTarget.value);
+                  setValidEmail(e.currentTarget.validity.valid);
+                }}
               />
             </label>
             {!reset && (
@@ -109,7 +114,7 @@ function Auth() {
                 {error}
               </p>
             )}
-            <Button type="submit" disabled={busy} className="auth-submit">
+            <Button type="submit" disabled={busy || !validEmail} className="auth-submit">
               {busy ? "Please wait…" : reset ? "Send reset link" : "Log In"}
               <ArrowRight />
             </Button>

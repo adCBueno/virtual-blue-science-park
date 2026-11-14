@@ -11,23 +11,21 @@ export function CompanyEditor({
   privateProfile,
   close,
   updated,
-  preview = false,
-  previewStaff = false,
+  canRequestReview = false,
+  pendingReview = false,
 }: {
   company: Company;
   profile?: PublicProfileRecord | undefined;
   privateProfile?: PrivateProfileRecord | undefined;
   close: () => void;
   updated: () => Promise<void>;
-  preview?: boolean;
-  previewStaff?: boolean;
+  canRequestReview?: boolean;
+  pendingReview?: boolean;
 }) {
   return (
     <aside className="detail-panel company-editor" aria-label="Company profile editor">
       <div className="detail-top">
-        <span className="eyebrow">
-          {preview ? "SIMULATED ROLE PREVIEW" : "PRIVATE COMPANY WORKSPACE"}
-        </span>
+        <span className="eyebrow">PRIVATE COMPANY WORKSPACE</span>
         <Button variant="ghost" size="icon" aria-label="Close company profile" onClick={close}>
           <X />
         </Button>
@@ -45,8 +43,8 @@ export function CompanyEditor({
         company={company}
         profile={profile}
         privateProfile={privateProfile}
-        preview={preview}
-        previewStaff={previewStaff}
+        canRequestReview={canRequestReview}
+        pendingReview={pendingReview}
         updated={updated}
         onCancel={close}
       />

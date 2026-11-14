@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowUp, Minus, X } from "lucide-react";
+import { chatRequestSchema } from "@/contracts/ecosystem";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "@/components/account-provider";
 import { BlueMascot } from "@/components/blue-mascot";
@@ -99,7 +100,7 @@ export function AiAssistant({
 
   const ask = async (question: string) => {
     const text = question.trim();
-    if (!text || busy) return;
+    if (busy || !chatRequestSchema.shape.question.safeParse(text).success) return;
     const requested = ++generation.current.currentId;
     const history = messages.slice(-12).map((m) => ({ role: m.role, text: m.text }));
     setMessages((current) => [...current, { role: "user", text }]);
@@ -298,7 +299,7 @@ export function AiAssistant({
               type="submit"
               size="icon"
               aria-label="Send question"
-              disabled={busy || !input.trim()}
+              disabled={busy || !chatRequestSchema.shape.question.safeParse(input.trim()).success}
             >
               <ArrowUp />
             </Button>

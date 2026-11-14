@@ -27,7 +27,8 @@ export function ProfileForm({
   company,
   profile,
   privateProfile,
-  previewStaff = false,
+  canRequestReview = false,
+  pendingReview = false,
   intent = "edit",
   updated,
   onCancel,
@@ -35,8 +36,8 @@ export function ProfileForm({
   company: Company;
   profile?: PublicProfileRecord | undefined;
   privateProfile?: PrivateProfileRecord | undefined;
-  preview?: boolean;
-  previewStaff?: boolean;
+  canRequestReview?: boolean;
+  pendingReview?: boolean;
   intent?: EditorIntent;
   updated: () => Promise<void>;
   onCancel?: () => void;
@@ -55,7 +56,17 @@ export function ProfileForm({
   const set = <K extends keyof ProfileDraft>(key: K, value: ProfileDraft[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
 
+  const canSave = !busy && Boolean(draft.name.trim());
+  const canPublish = canSave && fields.length > 0;
+  const canSend =
+    !busy &&
+    canRequestReview &&
+    Boolean(privateProfile) &&
+    !pendingReview &&
+    Boolean(reviewService.resolveRecipient(company.id));
+
   const persist = async (publish: boolean) => {
+    if (!(publish ? canPublish : canSave)) return;
     setBusy(true);
     setError("");
     try {
@@ -75,6 +86,7 @@ export function ProfileForm({
   };
 
   const requestReview = async () => {
+    if (!canSend) return;
     setError("");
     setBusy(true);
     try {
@@ -83,9 +95,7 @@ export function ProfileForm({
         throw new Error(
           "No registered company account yet. A representative account must be assigned first.",
         );
-      setRecipient(
-        recipient.name === "Demo preview" ? company.name + " demo account" : recipient.name,
-      );
+      setRecipient(company.name + " demo account");
       setConfirmation("send");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to find the company account.");
@@ -95,6 +105,7 @@ export function ProfileForm({
   };
 
   const confirmSend = async () => {
+    if (!canSend || !recipient) return;
     setBusy(true);
     try {
       reviewService.request(company.id);
@@ -239,15 +250,11 @@ export function ProfileForm({
         ))}
       </div>
       <div className="form-actions">
-        <Button disabled={busy} onClick={() => void persist(false)}>
+        <Button disabled={!canSave} onClick={() => void persist(false)}>
           <LockKeyhole />
           Save Privately
         </Button>
-        <Button
-          variant="outline"
-          disabled={busy || fields.length === 0}
-          onClick={() => setConfirmation("publish")}
-        >
+        <Button variant="outline" disabled={!canPublish} onClick={() => setConfirmation("publish")}>
           <Globe2 />
           Publish Changes
         </Button>
@@ -257,8 +264,8 @@ export function ProfileForm({
           </Button>
         )}
       </div>
-      {previewStaff && (
-        <Button variant="outline" disabled={busy} onClick={() => void requestReview()}>
+      {canRequestReview && (
+        <Button variant="outline" disabled={!canSend} onClick={() => void requestReview()}>
           <Send />
           Send to Company
         </Button>
@@ -290,7 +297,7 @@ export function ProfileForm({
           </p>
           <div>
             <Button
-              disabled={busy}
+              disabled={confirmation === "publish" ? !canPublish : !canSend || !recipient}
               onClick={() => (confirmation === "publish" ? void persist(true) : void confirmSend())}
             >
               Confirm
