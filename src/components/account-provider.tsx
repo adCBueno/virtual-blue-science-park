@@ -6,6 +6,9 @@ import {
   review as reviewService,
 } from "@/data/services";
 import { profileRecord } from "@/data/mock";
+import { backendState } from "@/data/services";
+import { reloadBackend } from "@/data/api/adapter";
+import { readSession } from "@/data/api/store";
 
 function snapshot() {
   const reviews = reviewService.list();
@@ -53,10 +56,15 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     setWorkspace(snapshot());
   }, []);
   useEffect(() => {
-    void refresh();
+    /* Team-API mode: the page arrives with public data; a stored login loads that user's view. */
+    if (backendState.enabled && readSession())
+      void reloadBackend()
+        .catch(() => undefined)
+        .then(refresh);
+    else void refresh();
   }, [refresh]);
   const signOut = async () => {
-    authService.signOut();
+    await authService.signOut();
     await refresh();
     await router.navigate({ to: "/auth", replace: true });
   };

@@ -1,0 +1,15 @@
+# Frontend only, pointing at a backend that runs on your machine (http://localhost:8000).
+#   docker compose up --build        → http://localhost:3000
+# In the backend repo, use the `ui` service shown in DOCKER.md instead (API_URL=http://api:8000).
+services:
+  frontend:
+    image: adcbueno1/virtual-science-park:latest
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: http://host.docker.internal:8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

@@ -12,6 +12,8 @@ import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { AccountProvider } from "@/components/account-provider";
+import { loadBackend } from "@/data/api/backend.functions";
+import { applyLoaderSnapshot } from "@/data/api/store";
 
 function NotFoundComponent() {
   return (
@@ -105,6 +107,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
   }),
+  /* Public ecosystem from the team API when API_URL is set on the server; otherwise { enabled: false }. */
+  loader: () => loadBackend({ data: { token: null } }),
+  staleTime: Infinity,
+  shouldReload: false,
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -127,6 +133,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  applyLoaderSnapshot(Route.useLoaderData());
 
   return (
     <QueryClientProvider client={queryClient}>

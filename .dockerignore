@@ -1,0 +1,24 @@
+# Dependencies and build output are recreated inside the image
+node_modules
+.output
+dist
+dist-ssr
+.nitro
+.tanstack
+.vinxi
+.wrangler
+
+# Local tooling, editors, VCS
+.git
+.github
+.vscode
+.idea
+.lovable
+.claude
+*.log
+.DS_Store
+
+# Runtime secrets are passed with --env-file, never baked into the image
+.env.docker
+.env.*.local
+*.local

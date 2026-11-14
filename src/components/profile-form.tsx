@@ -70,7 +70,7 @@ export function ProfileForm({
     setBusy(true);
     setError("");
     try {
-      companyRepository.save(company.id, draft, publish ? fields : []);
+      await companyRepository.save(company.id, draft, publish ? fields : []);
       await updated();
       setMessage(
         publish

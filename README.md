@@ -31,14 +31,14 @@ on the active company and the current demo role.
 
 ## Connect the team API
 
-See [the shared contract](docs/api/README.md). The active service facade is
-`src/data/services.ts`. Canonical schemas live under `src/contracts`, with
-fixture records under `src/data/fixtures` and map configuration under
-`src/features/universe`.
+Set `API_URL` on the server (for example `API_URL=http://localhost:8000 bun run dev`, or
+`-e API_URL=http://api:8000` for the Docker image). The app then loads companies, profiles,
+opportunities and recommendations from the team backend, logs in against `/auth/login`, and saves
+profile edits as claims. The browser calls Start server functions (`src/data/api/backend.functions.ts`)
+that forward to the backend, so no CORS or public API URL is needed. Without `API_URL` the app
+uses its fixtures and mock services (UI contract: [docs/api](docs/api/README.md)). Mapping between the two contracts lives in
+`src/data/api/mapping.ts`; see [DOCKER.md](./DOCKER.md) for the endpoint table.
 
-To enable the team backend, implement the six service groups in the facade
-against the agreed operations. Route protected operations through TanStack Start
-server functions. Use `createTeamApiTransport` on the server with
-`TEAM_API_BASE_URL` and supply endpoint mapping, per-request credentials, and
-response schemas. Add server-side selection for `DATA_PROVIDER=api` once those
-operations are available. Until then the app uses its mock services.
+## Docker
+
+See [DOCKER.md](./DOCKER.md).

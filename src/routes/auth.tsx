@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { auth as authService } from "@/data/services";
+import { auth as authService, backendState } from "@/data/services";
 import { useAccount } from "@/components/account-provider";
 
 import { ConnectionWaves } from "@/components/connection-waves";
@@ -44,7 +44,7 @@ function Auth() {
     try {
       if (reset) setSent(true);
       else {
-        authService.signIn(email);
+        await authService.signIn(email, password);
         await refresh();
         await navigate({ to: "/" });
       }
@@ -131,8 +131,9 @@ function Auth() {
           {reset ? "Back to login" : "Forgot password?"}
         </Button>
         <p className="auth-account-note">
-          Simulated demo login. Use demo-nord@example.test or demo-staff@example.test. Leave the
-          password blank.
+          {backendState.enabled
+            ? "Log in with your Virtual Science Park account."
+            : "Simulated demo login. Use demo-nord@example.test or demo-staff@example.test. Leave the password blank."}
         </p>
       </section>
     </main>

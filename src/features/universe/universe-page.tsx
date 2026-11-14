@@ -65,7 +65,8 @@ type Connection = ReturnType<typeof collaborators>[number];
 type Detail =
   { kind: "opportunity"; item: ScoredOpportunity } | { kind: "connection"; item: Connection };
 function CompanyMark({ company }: { company: Company }) {
-  const label = Object.entries(companyVisuals).find(([id]) => id === company.id)?.[1].label;
+  const label =
+    Object.entries(companyVisuals).find(([id]) => id === company.id)?.[1].label ?? company.label;
   return (
     <span className={`company-mark mark-${company.mark}`} aria-hidden="true">
       {company.id === "nord" ? (
@@ -284,11 +285,7 @@ export function UniversePage() {
         <span className="brand-divider" />
         <span className="product-name">Virtual Science Park</span>
         <nav className="main-nav" aria-label="Main navigation">
-          <Button
-            variant="nav"
-            data-active={view === "universe" && !selected}
-            onClick={back}
-          >
+          <Button variant="nav" data-active={view === "universe" && !selected} onClick={back}>
             <Globe2 />
             The Park
           </Button>
@@ -834,16 +831,20 @@ export function UniversePage() {
                 <Sparkles size={17} />
                 <div>
                   <h3>Why it’s relevant to {(focusedCompany ?? selected).name}</h3>
-                  <p>
-                    Your expertise in{" "}
-                    {detail.item.tags
-                      .filter((t) => (focusedCompany ?? selected).tags.includes(t))
-                      .join(" and ")}{" "}
-                    aligns with this opportunity.
-                    {interests.includes(detail.item.category)
-                      ? ` It also matches your ${detail.item.category.toLowerCase()} priority.`
-                      : " It opens a complementary path for your next stage of growth."}
-                  </p>
+                  {detail.item.why ? (
+                    <p>{detail.item.why}</p>
+                  ) : (
+                    <p>
+                      Your expertise in{" "}
+                      {detail.item.tags
+                        .filter((t) => (focusedCompany ?? selected).tags.includes(t))
+                        .join(" and ")}{" "}
+                      aligns with this opportunity.
+                      {interests.includes(detail.item.category)
+                        ? ` It also matches your ${detail.item.category.toLowerCase()} priority.`
+                        : " It opens a complementary path for your next stage of growth."}
+                    </p>
+                  )}
                 </div>
               </div>
               <dl>
