@@ -6,6 +6,7 @@ import {
   backendProfileSchema,
   backendRecommendationSchema,
   backendClaimSchema,
+  backendChatResponseSchema,
   backendUserSchema,
   type BackendEcosystem,
 } from "./contract";
@@ -119,11 +120,14 @@ export type ClaimOp =
   { op: "patch"; claimId: string; value: string } | { op: "add"; field: string; value: string };
 
 /** Applies profile edits as claims (each becomes user_confirmed on the backend), then publishes if asked. */
+export type Visibility = "private" | "published";
+
+/** Applies claim edits one by one, then sets visibility when a new value is given. */
 export async function saveProfile(
   token: string,
   companyId: string,
   ops: ClaimOp[],
-  publish: boolean,
+  visibility: Visibility | null,
 ) {
   for (const op of ops) {
     if (op.op === "patch")
@@ -139,11 +143,11 @@ export async function saveProfile(
         body: { field: op.field, value: op.value },
       });
   }
-  if (publish)
+  if (visibility)
     await backend(`companies/${id(companyId)}/visibility`, backendProfileSchema, {
       method: "PATCH",
       token,
-      body: { visibility: "published" },
+      body: { visibility },
     });
 }
 
@@ -157,3 +161,7 @@ export const sendFeedback = (
     token,
     body: { opportunity_id: opportunityId, verdict },
   });
+
+/** Blue's answer from the backend guardrail + matcher. Only company accounts get one (visitor 401, admin 403). */
+export const chat = (token: string, message: string) =>
+  backend("chat", backendChatResponseSchema, { method: "POST", token, body: { message } });

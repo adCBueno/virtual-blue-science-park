@@ -3,6 +3,8 @@ import { Bookmark, CalendarClock, Check, Handshake, RotateCcw, Users, X } from "
 import { Button } from "@/components/ui/button";
 import { weeklyDigest, type DigestItem } from "@/lib/digest";
 import type { Company } from "@/lib/ecosystem";
+import { OpportunityFeedback } from "@/components/opportunity-feedback";
+import { backendState } from "@/data/services";
 
 /**
  * "What matters this week": three items instead of a feed. Built for the overwhelmed reader
@@ -60,6 +62,7 @@ export function WeeklyDigest({
                 <span className="digest-when">{item.when}</span>
                 <strong>{item.title}</strong>
                 <span className="digest-why">{item.why}</span>
+                {item.caveats && <span className="digest-caveats">{item.caveats}</span>}
               </button>
               {canMarkInterest && item.teamUp && (
                 <button
@@ -77,26 +80,35 @@ export function WeeklyDigest({
                   <span>brings {item.teamUp.brings.join(", ")}</span>
                 </button>
               )}
-              {canMarkInterest && (
-                <div className="digest-actions">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-pressed={isSaved}
-                    onClick={() => onToggleSave(item.id)}
-                  >
-                    {isSaved ? <Check /> : <Bookmark />}
-                    {isSaved ? "Saved" : "Interested"}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDismissed((d) => [...d, item.id])}
-                  >
-                    <X />
-                    Not for us
-                  </Button>
-                </div>
+              {backendState.enabled ? (
+                <OpportunityFeedback
+                  opportunityId={item.id}
+                  onVerdict={(verdict) =>
+                    verdict === "not_relevant" && setDismissed((d) => [...d, item.id])
+                  }
+                />
+              ) : (
+                canMarkInterest && (
+                  <div className="digest-actions">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-pressed={isSaved}
+                      onClick={() => onToggleSave(item.id)}
+                    >
+                      {isSaved ? <Check /> : <Bookmark />}
+                      {isSaved ? "Saved" : "Interested"}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDismissed((d) => [...d, item.id])}
+                    >
+                      <X />
+                      Not for us
+                    </Button>
+                  </div>
+                )
               )}
             </li>
           );

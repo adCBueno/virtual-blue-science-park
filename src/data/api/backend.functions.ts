@@ -1,6 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod/v4";
-import type { BackendEcosystem, BackendLogin, BackendUser } from "./contract";
+import {
+  CHAT_MAX_CHARS,
+  type BackendChatResponse,
+  type BackendEcosystem,
+  type BackendLogin,
+  type BackendUser,
+} from "./contract";
 
 /** Browser-callable endpoints that forward to the team backend (see backend.server.ts). */
 
@@ -85,15 +91,20 @@ export const backendSaveProfile = createServerFn({ method: "POST" })
       token: string;
       companyId: string;
       ops: z.infer<typeof claimOp>[];
-      publish: boolean;
+      visibility: "private" | "published" | null;
     }) =>
       z
-        .object({ token, companyId: slug, ops: z.array(claimOp).max(40), publish: z.boolean() })
+        .object({
+          token,
+          companyId: slug,
+          ops: z.array(claimOp).max(60),
+          visibility: z.enum(["private", "published"]).nullable(),
+        })
         .parse(input),
   )
   .handler(async ({ data }) => {
     const api = await import("./backend.server");
-    await api.saveProfile(data.token, data.companyId, data.ops, data.publish);
+    await api.saveProfile(data.token, data.companyId, data.ops, data.visibility);
     return { ok: true };
   });
 
@@ -116,4 +127,23 @@ export const backendFeedback = createServerFn({ method: "POST" })
     const api = await import("./backend.server");
     await api.sendFeedback(data.token, data.opportunityId, data.verdict);
     return { ok: true };
+  });
+
+export type ChatResult =
+  { ok: true; reply: BackendChatResponse } | { ok: false; status: number; message: string };
+
+/** Forwards one chat message with the user's token. Errors come back as a status so the UI can explain them. */
+export const backendChat = createServerFn({ method: "POST" })
+  .inputValidator((input: { token: string; message: string }) =>
+    z.object({ token, message: z.string().trim().min(1).max(CHAT_MAX_CHARS) }).parse(input),
+  )
+  .handler(async ({ data }): Promise<ChatResult> => {
+    const api = await import("./backend.server");
+    try {
+      return { ok: true, reply: await api.chat(data.token, data.message) };
+    } catch (err) {
+      if (err instanceof api.BackendError)
+        return { ok: false, status: err.status, message: err.message };
+      return { ok: false, status: 500, message: "The assistant is unavailable right now." };
+    }
   });

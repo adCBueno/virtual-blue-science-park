@@ -3,7 +3,12 @@ import { Check, Globe2, LockKeyhole, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { categories, type Company } from "@/lib/ecosystem";
 import { draftFrom, type ProfileDraft } from "@/lib/account";
-import { company as companyRepository, review as reviewService } from "@/data/services";
+import {
+  backendState,
+  company as companyRepository,
+  review as reviewService,
+} from "@/data/services";
+import { BackendProfileEditor } from "@/components/backend-profile-editor";
 import type { PublicProfileRecord, PrivateProfileRecord } from "@/lib/profile-sections";
 import type { PublishField } from "@/lib/profile-sections";
 
@@ -22,8 +27,23 @@ const publishable: { field: PublishField; label: string }[] = [
   { field: "interests", label: "Interests & opportunities" },
 ];
 
+type ProfileFormProps = Parameters<typeof LocalProfileForm>[0];
+
 /** The single editing form behind both the inline profile panel and the wider editor. */
-export function ProfileForm({
+export function ProfileForm(props: ProfileFormProps) {
+  return backendState.enabled ? (
+    <BackendProfileEditor
+      company={props.company}
+      updated={props.updated}
+      onCancel={props.onCancel}
+    />
+  ) : (
+    <LocalProfileForm {...props} />
+  );
+}
+
+/** Demo-mode editor on the fixture profiles. */
+function LocalProfileForm({
   company,
   profile,
   privateProfile,

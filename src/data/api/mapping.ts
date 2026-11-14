@@ -13,7 +13,7 @@ import type { BackendClaim, BackendOpportunity, BackendProfile, BackendUser } fr
  * Backend claims (one fact each, with evidence) become the UI's profile sections.
  */
 
-type UiField =
+export type UiField =
   | "description"
   | "productsServices"
   | "technologies"
@@ -39,12 +39,13 @@ export const fieldMap: Record<string, UiField> = {
   collaborations: "projectsCollaborations",
 };
 
-/** UI section → the backend field a user edit is written to. */
-export const writeField: Record<Exclude<UiField, "customerGroups">, string> = {
+/** UI section → the backend field a new row is written to. */
+export const writeField: Record<UiField, string> = {
   description: "what_it_does",
   productsServices: "products_services",
   technologies: "technologies",
   markets: "markets",
+  customerGroups: "customer_groups",
   geographicalFocus: "geographic_focus",
   developmentPriorities: "development_priorities",
   projectsCollaborations: "projects",

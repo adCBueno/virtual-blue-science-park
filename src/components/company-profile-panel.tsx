@@ -13,6 +13,8 @@ import {
 } from "@/lib/profile-sections";
 import { review as reviewService } from "@/data/services";
 import { ProfileForm, type EditorIntent } from "@/components/profile-form";
+import { BackendClaims, SimulatedBadge } from "@/components/backend-claims";
+import { backendProfile } from "@/data/api/store";
 
 function Provenance({ meta }: { meta: SectionMeta }) {
   return (
@@ -102,7 +104,9 @@ export function CompanyProfilePanel({
             <X />
           </Button>
         </div>
-        <h2>{record.name || company.name}</h2>
+        <h2>
+          {record.name || company.name} <SimulatedBadge companyId={company.id} />
+        </h2>
         <span className="industry-label">{company.industry}</span>
         <p className="panel-summary">
           {editing
@@ -151,6 +155,8 @@ export function CompanyProfilePanel({
             updated={updated}
             onCancel={() => setEditing(false)}
           />
+        ) : backendProfile(company.id) ? (
+          <BackendClaims companyId={company.id} />
         ) : (
           <div className="profile-accordion">
             {expandable.map((section) => (

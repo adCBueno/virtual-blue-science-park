@@ -161,7 +161,7 @@ export function weeklyDigest(
       rank,
       days,
       when: whenLabel(days),
-      why: reasons.join(" · "),
+      why: o.why ?? reasons.join(" · "),
       teamUp: teamUpFor(o, company, pool),
     });
   }

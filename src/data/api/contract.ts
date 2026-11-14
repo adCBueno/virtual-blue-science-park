@@ -70,6 +70,15 @@ export const backendLoginSchema = z.object({
   user: backendUserSchema,
 });
 
+/** POST /chat. The company comes from the session; the body only carries the message. */
+export const CHAT_MAX_CHARS = 2000;
+export const backendChatResponseSchema = z.object({
+  reply: z.string().min(1),
+  action: z.enum(["answer", "redirect", "clarify", "refuse"]),
+  sources: z.array(z.string()).default([]),
+});
+export type BackendChatResponse = z.infer<typeof backendChatResponseSchema>;
+
 export type BackendClaim = z.infer<typeof backendClaimSchema>;
 export type BackendProfile = z.infer<typeof backendProfileSchema>;
 export type BackendOpportunity = z.infer<typeof backendOpportunitySchema>;

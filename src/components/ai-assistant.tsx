@@ -4,7 +4,8 @@ import { chatRequestSchema } from "@/contracts/ecosystem";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "@/components/account-provider";
 import { BlueMascot } from "@/components/blue-mascot";
-import { assistant as assistantService } from "@/data/services";
+import { assistant as assistantService, backendState } from "@/data/services";
+import { CHAT_MAX_CHARS } from "@/data/api/contract";
 import {
   greeting,
   suggestedQuestions,
@@ -15,6 +16,21 @@ import {
 import type { Company } from "@/lib/ecosystem";
 
 const GREETED_KEY = "blue-science-park-blue-greeted";
+
+const noticeLabels = {
+  redirect: "Outside the assistant's scope",
+  clarify: "Needs clarification",
+  refuse: "Request refused by the guardrail",
+  login: "Company login required",
+  expired: "Session expired",
+} as const;
+
+/** Demo mode keeps the 500-character limit; the team API accepts up to 2000. */
+function validQuestion(text: string) {
+  return backendState.enabled
+    ? text.length > 0 && text.length <= CHAT_MAX_CHARS
+    : chatRequestSchema.shape.question.safeParse(text).success;
+}
 
 /** Floating companion that answers from the data the signed-in user is actually allowed to see. */
 export function AiAssistant({
@@ -100,7 +116,7 @@ export function AiAssistant({
 
   const ask = async (question: string) => {
     const text = question.trim();
-    if (busy || !chatRequestSchema.shape.question.safeParse(text).success) return;
+    if (busy || !validQuestion(text)) return;
     const requested = ++generation.current.currentId;
     const history = messages.slice(-12).map((m) => ({ role: m.role, text: m.text }));
     setMessages((current) => [...current, { role: "user", text }]);
@@ -116,7 +132,13 @@ export function AiAssistant({
       if (requested !== generation.current.currentId) return;
       setMessages((current) => [
         ...current,
-        { role: "assistant", text: reply.answer, sources: reply.sources, action: reply.action },
+        {
+          role: "assistant",
+          text: reply.answer,
+          sources: reply.sources,
+          action: reply.action,
+          ...(reply.notice ? { notice: reply.notice } : {}),
+        },
       ]);
       onAction(reply.action);
     } catch (err) {
@@ -248,6 +270,11 @@ export function AiAssistant({
             )}
             {messages.map((message, index) => (
               <div className={`chat-message chat-${message.role}`} key={index}>
+                {message.notice && (
+                  <span className={`chat-notice notice-${message.notice}`}>
+                    {noticeLabels[message.notice]}
+                  </span>
+                )}
                 <p>{message.text}</p>
                 {message.sources && message.sources.length > 0 && (
                   <span className="chat-sources">
@@ -299,12 +326,16 @@ export function AiAssistant({
               type="submit"
               size="icon"
               aria-label="Send question"
-              disabled={busy || !chatRequestSchema.shape.question.safeParse(input.trim()).success}
+              disabled={busy || !validQuestion(input.trim())}
             >
               <ArrowUp />
             </Button>
           </form>
-          <span className="chat-demo">Assistant · answers use mock data</span>
+          <span className="chat-demo">
+            {backendState.enabled
+              ? "Assistant · answers from the Virtual Science Park API, guarded by its scope rules"
+              : "Assistant · answers use mock data"}
+          </span>
         </aside>
       )}
     </>

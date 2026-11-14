@@ -1,5 +1,5 @@
 import * as mock from "./mock";
-import { apiAuth, apiCompanies, apiReviews } from "./api/adapter";
+import { apiAssistant, apiAuth, apiCompanies, apiReviews } from "./api/adapter";
 import { backendState } from "./api/store";
 import type { ProfileDraft } from "@/lib/account";
 import type { PublishField } from "@/lib/profile-sections";
@@ -41,8 +41,14 @@ const reviewService = {
   request: (id: string) => (api() ? apiReviews.request(id) : mock.reviewService.request(id)),
 };
 
+/* With the team API, Blue always answers through POST /chat; the mock is only for demo mode. */
+const assistantService = {
+  reply: (input: Parameters<typeof mock.assistantService.reply>[0]) =>
+    api() ? apiAssistant.reply(input as { question: string }) : mock.assistantService.reply(input),
+};
+
 export const services = {
-  assistantService: mock.assistantService,
+  assistantService,
   authService,
   companyRepository,
   opportunityRepository: mock.opportunityRepository,

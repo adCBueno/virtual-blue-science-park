@@ -12,6 +12,7 @@ import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { AccountProvider } from "@/components/account-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { loadBackend } from "@/data/api/backend.functions";
 import { applyLoaderSnapshot } from "@/data/api/store";
 
@@ -140,6 +141,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <AccountProvider>
         <Outlet />
+        <Toaster position="bottom-center" />
       </AccountProvider>
     </QueryClientProvider>
   );

@@ -30,6 +30,8 @@ export type Opportunity = Pick<OpportunityRecord, "id" | "title" | "category"> &
   tags: string[];
   /** Explanation from the backend matcher, when recommendations come from the team API. */
   why?: string;
+  /** The matcher's caveats, e.g. "potential match, eligibility not confirmed". */
+  caveats?: string;
 };
 type EcosystemSource = {
   companies: CompanyRecord[];
@@ -100,7 +102,13 @@ if (initial.length < 2) throw new Error("The prototype needs at least two compan
 export const companies = initial as [Company, Company, ...Company[]];
 export const opportunities: Opportunity[] = buildOpportunities(catalogue);
 
-export type ExternalMatch = { opportunityId: string; score: number; why: string; shared: string[] };
+export type ExternalMatch = {
+  opportunityId: string;
+  score: number;
+  why: string;
+  caveats: string;
+  shared: string[];
+};
 /** Recommendations computed by the backend matcher, per company. Null = use the local rule-based matching. */
 let externalMatches: Map<string, ExternalMatch[]> | null = null;
 
@@ -134,7 +142,7 @@ export function recommendations(
     return (externalMatches.get(company.id) ?? []).flatMap((match) => {
       const o = opportunities.find((item) => item.id === match.opportunityId);
       return o && (category === "All" || category === o.category)
-        ? [{ ...o, score: Math.round(match.score * 100), why: match.why }]
+        ? [{ ...o, score: Math.round(match.score * 100), why: match.why, caveats: match.caveats }]
         : [];
     });
   }

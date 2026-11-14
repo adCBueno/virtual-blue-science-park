@@ -8,17 +8,21 @@ export type AssistantAction =
   | { kind: "focus"; companyId: string }
   | { kind: "highlight"; opportunityIds: string[]; companyIds: string[] };
 
+/** Shown as a small tag so the guardrail's decision is visible (team-API mode). */
+export type AssistantNotice = "redirect" | "clarify" | "refuse" | "login" | "expired";
 export type AssistantReply = {
   answer: string;
   action: AssistantAction;
   sources: AssistantSource[];
   simulated: boolean;
+  notice?: AssistantNotice;
 };
 export type ChatMessage = {
   role: "user" | "assistant";
   text: string;
   sources?: AssistantSource[];
   action?: AssistantAction;
+  notice?: AssistantNotice;
 };
 
 export const assistantName = "Blue";

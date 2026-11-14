@@ -67,7 +67,13 @@ export function applySnapshot(snapshot: BackendSnapshot) {
     const claims = profiles.find((p) => p.company_id === rec.company_id)?.claims ?? [];
     const shared = rec.matched_claims.flatMap((id) => claims.find((c) => c.id === id)?.value ?? []);
     const list = matches.get(rec.company_id) ?? [];
-    list.push({ opportunityId: rec.opportunity_id, score: rec.score, why: rec.why, shared });
+    list.push({
+      opportunityId: rec.opportunity_id,
+      score: rec.score,
+      why: rec.why,
+      caveats: rec.caveats,
+      shared,
+    });
     matches.set(rec.company_id, list);
   }
   for (const list of matches.values()) list.sort((a, b) => b.score - a.score);
@@ -89,4 +95,11 @@ export function applySnapshot(snapshot: BackendSnapshot) {
     ? ui.filter((p): p is PrivateCompanyProfile => p.visibility === "private")
     : [];
   backendState.version++;
+}
+
+/** The backend profile behind a company, in team-API mode. */
+export function backendProfile(companyId: string) {
+  return backendState.enabled
+    ? backendState.profiles.find((p) => p.company_id === companyId)
+    : undefined;
 }

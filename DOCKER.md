@@ -45,10 +45,16 @@ docker run -p 3000:3000 -e API_URL=http://host.docker.internal:8000 \
 | Opportunities (funding, events, testbeds) with source and dates | `GET /opportunities` |
 | Recommendations, "why it's relevant", reverse matching (opportunity → companies) | `GET /companies/{id}/recommendations` |
 | Login / logout, roles (admin → staff, company → representative) | `POST /auth/login`, `GET /auth/me`, `POST /auth/logout` |
-| Profile edits (saved as `user_confirmed` claims) and publishing | `PATCH`/`POST /companies/{id}/claims`, `PATCH /companies/{id}/visibility` |
+| Profile editor: one row per claim — a changed row patches that claim, a new row adds one (saved as `user_confirmed`) | `PATCH /companies/{id}/claims/{claim_id}`, `POST /companies/{id}/claims` |
+| Private / published toggle | `PATCH /companies/{id}/visibility` |
+| Every claim's label (stated / inferred / company-confirmed), evidence link, retrieval date, "Cached snapshot"; profile "Simulated" badge and "Not found in public sources" | profile `claims`, `is_simulated`, `missing_fields` |
+| Blue, the assistant: reply, source links and the guardrail decision (redirect / clarify / refuse) | `POST /chat` (company accounts only) |
+| Save / Relevant / Not relevant on recommended opportunities | `POST /feedback` |
 
-Not yet backed by the API (still simulated in the UI, clearly labelled): Blue's chat replies
-(`/chat` is not built yet), profile review requests, outreach tracking and the staff briefing's member news.
+`company_id` is never sent in a request body: the backend takes the company from the login session.
+
+Still simulated in the UI (clearly labelled), because the backend has no endpoint for them yet: profile review
+requests, outreach tracking and the staff briefing's member news.
 
 ## Publish a new version
 

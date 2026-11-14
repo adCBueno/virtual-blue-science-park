@@ -55,6 +55,7 @@ import {
 } from "@/data/services";
 import { useAccount } from "@/components/account-provider";
 import { CompanyEditor } from "@/components/company-editor";
+import { OpportunityFeedback } from "@/components/opportunity-feedback";
 import { CompanyProfilePanel } from "@/components/company-profile-panel";
 import { AiAssistant } from "@/components/ai-assistant";
 import { applyProfile, canEditCompany } from "@/lib/account";
@@ -832,7 +833,12 @@ export function UniversePage() {
                 <div>
                   <h3>Why it’s relevant to {(focusedCompany ?? selected).name}</h3>
                   {detail.item.why ? (
-                    <p>{detail.item.why}</p>
+                    <>
+                      <p>{detail.item.why}</p>
+                      {detail.item.caveats && (
+                        <p className="match-caveats">{detail.item.caveats}</p>
+                      )}
+                    </>
                   ) : (
                     <p>
                       Your expertise in{" "}
@@ -905,6 +911,7 @@ export function UniversePage() {
                 {saved.includes(detail.item.id) ? <Check /> : <Bookmark />}
                 {saved.includes(detail.item.id) ? "Saved for this session" : "Save opportunity"}
               </Button>
+              <OpportunityFeedback opportunityId={detail.item.id} />
             </>
           ) : (
             <>
