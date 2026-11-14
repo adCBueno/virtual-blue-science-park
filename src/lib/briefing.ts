@@ -150,7 +150,7 @@ export function demoUpdates(now: Date): ParkUpdate[] {
 /** Outreach statuses that changed in the window become outcome updates. */
 export function outcomeUpdates(entries: OutreachEntry[]): ParkUpdate[] {
   return entries
-    .filter((e) => e.status !== "Sent")
+    .filter((e) => e.status !== "Prepared")
     .map((e) => ({
       id: `outcome:${e.id}`,
       companyId: e.companyId,

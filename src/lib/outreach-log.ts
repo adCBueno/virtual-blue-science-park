@@ -14,9 +14,10 @@ import {
  * Prototype storage: this browser only (localStorage). A shared table is the next step.
  */
 
-export type OutreachStatus = "Sent" | "Interested" | "Converted" | "Declined" | "No response";
+/** "Prepared": the email was drafted in the user's mail app or copied — the app itself sends nothing. */
+export type OutreachStatus = "Prepared" | "Interested" | "Converted" | "Declined" | "No response";
 export const outreachStatuses: OutreachStatus[] = [
-  "Sent",
+  "Prepared",
   "Interested",
   "Converted",
   "Declined",
@@ -50,7 +51,11 @@ export function loadLog(): OutreachEntry[] {
   try {
     const raw = window.localStorage.getItem(KEY);
     const parsed: unknown = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? (parsed as OutreachEntry[]) : [];
+    if (!Array.isArray(parsed)) return [];
+    /* Entries logged before the hand-off rename said "Sent"; the app itself never sent anything. */
+    return (parsed as OutreachEntry[]).map((e) =>
+      (e.status as string) === "Sent" ? { ...e, status: "Prepared" } : e,
+    );
   } catch {
     return [];
   }
@@ -81,7 +86,7 @@ export function entryFor(
     serviceId: brief.service.id,
     companyId: company.id,
     companyName: company.name,
-    status: "Sent",
+    status: "Prepared",
     sentAt: now.toISOString(),
     updatedAt: now.toISOString(),
     sentBy,
@@ -177,7 +182,7 @@ export function summarize(entries: OutreachEntry[]): OutreachSummary {
     companies: new Set(entries.map((e) => e.companyId)).size,
     converted,
     interested: byStage.Interested,
-    awaiting: byStage.Sent,
+    awaiting: byStage.Prepared,
     declined: byStage.Declined + byStage["No response"],
     rate: entries.length ? converted / entries.length : 0,
     byStage,
@@ -203,13 +208,13 @@ export function demoEntries(
   const pattern: OutreachStatus[] = [
     "Converted",
     "Interested",
-    "Sent",
+    "Prepared",
     "Converted",
     "No response",
     "Converted",
     "Declined",
     "Interested",
-    "Sent",
+    "Prepared",
     "Converted",
   ];
   const out: OutreachEntry[] = [];
@@ -236,7 +241,7 @@ export function seedDemo(companies: Company[], opportunities: Opportunity[]) {
 const csvCell = (v: string) => (/[",\n;]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
 export function logToCSV(entries: OutreachEntry[]) {
   const head = [
-    "Sent",
+    "Prepared",
     "Company",
     "Opportunity",
     "Type",
@@ -244,7 +249,7 @@ export function logToCSV(entries: OutreachEntry[]) {
     "BSP service",
     "Status",
     "Last update",
-    "Sent by",
+    "Prepared by",
     "Simulated",
   ];
   const rows = entries.map((e) => [

@@ -127,4 +127,19 @@ describe.skipIf(!url)("team backend integration", () => {
     await api.logout(nord.access_token);
     await expect(api.me(nord.access_token)).rejects.toMatchObject({ status: 401 });
   });
+  it("5. representative lookup: admin gets the email (404 until the endpoint is deployed), others are refused", async () => {
+    const api = await import("@/data/api/backend.server");
+    const admin = await api.login(ADMIN.email, ADMIN.password);
+    const found = await api.lookupRepresentative(admin.access_token, "nordsense");
+    if (process.env["BACKEND_REPRESENTATIVE"] === "deployed") {
+      expect(found).toEqual({ status: "found", email: "demo@nordsense.example.com" });
+      expect(await api.lookupRepresentative(admin.access_token, "no-such-company")).toEqual({
+        status: "none",
+      });
+    } else expect(["found", "none"]).toContain(found.status);
+    const nord = await api.login(NORD.email, NORD.password);
+    const refused = await api.lookupRepresentative(nord.access_token, "nordsense");
+    expect(["login", "none"]).toContain(refused.status);
+    if (process.env["BACKEND_REPRESENTATIVE"] === "deployed") expect(refused.status).toBe("login");
+  });
 });

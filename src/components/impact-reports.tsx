@@ -12,7 +12,7 @@ export function ImpactReports() {
 
   const exportPDF = () => {
     const funnel = [
-      ["Reached", summary.total],
+      ["Emails prepared", summary.total],
       ["Showed interest", summary.interested + summary.converted],
     ]
       .map(([l, n]) => `<tr><td>${l}</td><td>${n}</td></tr>`)
@@ -77,12 +77,13 @@ export function ImpactReports() {
       <div className="report-card report-funnel-card">
         <h3>Funnel</h3>
         <ol className="report-funnel">
-          {(["Sent", "Interested"] as const).map((stage) => {
-            const count = stage === "Sent" ? summary.total : summary.interested + summary.converted;
+          {(["Prepared", "Interested"] as const).map((stage) => {
+            const count =
+              stage === "Prepared" ? summary.total : summary.interested + summary.converted;
             return (
               <li key={stage}>
                 <span className="funnel-label">
-                  {stage === "Sent" ? "Reached" : "Showed interest"}
+                  {stage === "Prepared" ? "Emails prepared" : "Showed interest"}
                 </span>
                 <span className="funnel-track">
                   <span

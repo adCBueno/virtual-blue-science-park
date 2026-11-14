@@ -7,6 +7,7 @@ import {
   backendRecommendationSchema,
   backendClaimSchema,
   backendChatResponseSchema,
+  backendRepresentativeSchema,
   backendUserSchema,
   type BackendEcosystem,
 } from "./contract";
@@ -165,3 +166,31 @@ export const sendFeedback = (
 /** Blue's answer from the backend guardrail + matcher. Only company accounts get one (visitor 401, admin 403). */
 export const chat = (token: string, message: string) =>
   backend("chat", backendChatResponseSchema, { method: "POST", token, body: { message } });
+
+/** The representative account's email for one company. Admin token only (403 otherwise, 404 if none). */
+export const representative = (token: string, companyId: string) =>
+  backend(`companies/${id(companyId)}/representative`, backendRepresentativeSchema, { token });
+
+/** found = email loaded; none = 404 (no account, or the endpoint isn't deployed yet); login = 401/403. */
+export type RepresentativeResult =
+  | { status: "found"; email: string }
+  | { status: "none" }
+  | { status: "login" }
+  | { status: "error"; message: string };
+
+export async function lookupRepresentative(
+  token: string,
+  companyId: string,
+): Promise<RepresentativeResult> {
+  try {
+    const rep = await representative(token, companyId);
+    return { status: "found", email: rep.email };
+  } catch (err) {
+    if (err instanceof BackendError) {
+      if (err.status === 404) return { status: "none" };
+      if (err.status === 401 || err.status === 403) return { status: "login" };
+      return { status: "error", message: err.message };
+    }
+    return { status: "error", message: "Could not look up the representative." };
+  }
+}

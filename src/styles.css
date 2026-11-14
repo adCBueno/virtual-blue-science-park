@@ -961,7 +961,6 @@ h1 { font-size: 32px; font-weight: 650; line-height: 1.35; margin: 9px 0 8px; }
 .recipient-line strong { color: var(--primary); font-size: 12px; }
 .recipient-line small { color: var(--muted-foreground); font-size: 10px; }
 .outreach-card.is-failed { border-color: var(--coral); }
-.outreach-sent.status-failed, .outreach-sent.status-not-configured, .outreach-sent.status-no-recipient { color: var(--coral); }
 .email-sent-icon.is-warning { background: var(--coral-light); color: var(--coral); }
 .match-step { display: flex; flex-direction: column; gap: 14px; animation: match-step-in 220ms ease; }
 @keyframes match-step-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -1032,3 +1031,10 @@ h1 { font-size: 32px; font-weight: 650; line-height: 1.35; margin: 9px 0 8px; }
 .badge-simulated { background: var(--coral-light); color: var(--coral); font-size: 10px; }
 .badge-cached { background: var(--muted); color: var(--muted-foreground); border: 1px dashed var(--border); }
 .match-caveats, .digest-caveats { display: block; font-size: 11px; line-height: 1.55; color: var(--muted-foreground); font-style: italic; margin-top: 4px; }
+
+/* ---------- Outreach hand-off (mailto) ---------- */
+.outreach-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.outreach-actions > button { font-size: 11px; }
+.outreach-note { font-size: 10.5px; line-height: 1.5; color: var(--muted-foreground); }
+.outreach-sent.status-prepared { color: var(--teal); }
+.outreach-sent.status-no-recipient { color: var(--muted-foreground); }

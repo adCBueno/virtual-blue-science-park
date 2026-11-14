@@ -79,6 +79,13 @@ export const backendChatResponseSchema = z.object({
 });
 export type BackendChatResponse = z.infer<typeof backendChatResponseSchema>;
 
+/** GET /companies/{id}/representative (BSP admin only): the company account's email. */
+export const backendRepresentativeSchema = z.object({
+  company_id: z.string(),
+  email: z.string().email(),
+});
+export type BackendRepresentative = z.infer<typeof backendRepresentativeSchema>;
+
 export type BackendClaim = z.infer<typeof backendClaimSchema>;
 export type BackendProfile = z.infer<typeof backendProfileSchema>;
 export type BackendOpportunity = z.infer<typeof backendOpportunitySchema>;

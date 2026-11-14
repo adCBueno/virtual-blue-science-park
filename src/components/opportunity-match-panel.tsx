@@ -3,9 +3,9 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Check,
+  Copy,
   ExternalLink,
   Mail,
-  Send,
   Sparkles,
   X,
 } from "lucide-react";
@@ -20,8 +20,14 @@ import {
   type Opportunity,
 } from "@/lib/ecosystem";
 import { briefEmailLines } from "@/lib/action-brief";
-import { representativeFor } from "@/lib/representatives";
-import { resultLabels, useSendOutreach } from "@/lib/use-send-outreach";
+import { recipientLabels, useRepresentatives } from "@/lib/representatives";
+import {
+  emailText,
+  fitsInMailto,
+  mailtoUrl,
+  statusLabels,
+  useOutreachStatus,
+} from "@/lib/use-send-outreach";
 import { entryFor, logOutreach } from "@/lib/outreach-log";
 import { ActionBriefCard } from "@/components/action-brief-card";
 
@@ -60,9 +66,7 @@ export function OpportunityMatchPanel({
   sender,
   onClose,
   onFocusCompany,
-  live = false,
 }: {
-  live?: boolean;
   opportunity: Opportunity;
   companies: Company[];
   sender: string;
@@ -75,7 +79,7 @@ export function OpportunityMatchPanel({
   );
   const [step, setStep] = useState<"match" | "outreach">("match");
   const [bodies, setBodies] = useState<Record<string, string>>({});
-  const mailer = useSendOutreach(live);
+  const outreach = useOutreachStatus();
   const [open, setOpen] = useState<string | null>(null);
 
   useEffect(() => {
@@ -85,23 +89,21 @@ export function OpportunityMatchPanel({
   }, [opportunity.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chosen = fits.filter((f) => selected.includes(f.company.id));
-  const pending = chosen.filter((f) => mailer.results[f.company.id]?.status !== "sent");
-  const sendAll = async () => {
-    const results = await mailer.send(
-      pending.map((fit) => {
-        const draft = draftFor(opportunity, fit, sender);
-        return {
-          companyId: fit.company.id,
-          subject: draft.subject,
-          body: bodies[fit.company.id] ?? draft.body,
-        };
-      }),
-    );
-    const delivered = pending.filter((f) =>
-      results.some((r) => r.companyId === f.company.id && r.status === "sent"),
-    );
-    if (delivered.length)
-      logOutreach(delivered.map((f) => entryFor(opportunity, f.company, sender || "BSP staff")));
+  const recipients = useRepresentatives(step === "outreach" ? chosen.map((f) => f.company) : []);
+  const prepared = chosen.filter((f) => outreach.statuses[f.company.id] === "prepared").length;
+  /** The app sends nothing itself: opening the draft or copying it marks the email as prepared. */
+  const markPrepared = (fit: CompanyFit) => {
+    if (outreach.statuses[fit.company.id] !== "prepared")
+      logOutreach([entryFor(opportunity, fit.company, sender || "BSP staff")]);
+    outreach.mark(fit.company.id, "prepared");
+  };
+  const copyText = async (fit: CompanyFit, subject: string, body: string) => {
+    try {
+      await navigator.clipboard.writeText(emailText(subject, body));
+      markPrepared(fit);
+    } catch {
+      /* clipboard blocked: the text stays visible under "Review message" */
+    }
   };
   const toggle = (id: string) =>
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
@@ -233,29 +235,31 @@ export function OpportunityMatchPanel({
             </Button>
             <p className="match-summary-text">
               One personalised email per company: its reason, the next steps and how BSP can help.
-              Emails go to each company&apos;s representative account and are logged in Reports.
+              Open each draft in your own mail app, or copy it. Prepared emails are logged in
+              Reports.
             </p>
             <ul className="outreach-list">
               {chosen.map((fit) => {
                 const id = fit.company.id;
                 const draft = draftFor(opportunity, fit, sender);
                 const body = bodies[id] ?? draft.body;
-                const rep = representativeFor(fit.company);
-                const result = mailer.results[id];
+                const recipient = recipients(id);
+                const email = recipient.state === "found" ? recipient.email : null;
+                const status =
+                  outreach.statuses[id] ??
+                  (recipient.state === "none" ? "no-recipient" : undefined);
+                const fits = fitsInMailto(body);
                 return (
                   <li
                     key={id}
-                    className={`outreach-card ${result?.status === "sent" ? "is-sent" : result ? "is-failed" : ""}`}
+                    className={`outreach-card ${status === "prepared" ? "is-sent" : status ? "is-failed" : ""}`}
                   >
                     <div className="outreach-head">
                       <strong>{fit.company.name}</strong>
-                      {result ? (
-                        <span
-                          className={`outreach-sent status-${result.status}`}
-                          title={result.detail}
-                        >
-                          {result.status === "sent" && <Check size={12} />}
-                          {resultLabels[result.status]}
+                      {status ? (
+                        <span className={`outreach-sent status-${status}`}>
+                          {status === "prepared" && <Check size={12} />}
+                          {statusLabels[status]}
                         </span>
                       ) : (
                         <em className={`fit-chip fit-${fitLevel(fit.score).toLowerCase()}`}>
@@ -266,18 +270,15 @@ export function OpportunityMatchPanel({
                     <span className="match-reason">{fitReason(fit, opportunity.category)}</span>
                     <div className="recipient-line">
                       <span>To</span>
-                      {live ? (
+                      {recipient.state === "found" ? (
                         <>
-                          <strong>{fit.company.name} representative</strong>
-                          <small>account email, looked up securely when sending</small>
+                          <strong>{recipient.name ?? `${fit.company.name} representative`}</strong>
+                          <small>{recipient.email}</small>
                         </>
-                      ) : rep ? (
-                        <>
-                          <strong>{rep.name}</strong>
-                          <small>{rep.email}</small>
-                        </>
+                      ) : recipient.state === "error" ? (
+                        <small>{recipient.message}</small>
                       ) : (
-                        <small>No representative account yet</small>
+                        <small>{recipientLabels[recipient.state]}</small>
                       )}
                     </div>
                     <button
@@ -293,35 +294,47 @@ export function OpportunityMatchPanel({
                         <textarea
                           rows={10}
                           value={body}
-                          disabled={result?.status === "sent"}
                           onChange={(e) => setBodies((b) => ({ ...b, [id]: e.target.value }))}
                         />
                       </label>
+                    )}
+                    <div className="outreach-actions">
+                      <Button
+                        size="sm"
+                        disabled={!email || !fits}
+                        onClick={() => {
+                          if (!email) return;
+                          window.location.href = mailtoUrl(email, draft.subject, body);
+                          markPrepared(fit);
+                        }}
+                      >
+                        <Mail />
+                        Open in mail app
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => void copyText(fit, draft.subject, body)}
+                      >
+                        <Copy />
+                        Copy email text
+                      </Button>
+                    </div>
+                    {email && !fits && (
+                      <small className="outreach-note">
+                        This message is too long for a mail link. Copy it and paste it into a new
+                        email to {email}.
+                      </small>
                     )}
                   </li>
                 );
               })}
             </ul>
-            {mailer.error && (
-              <p role="alert" className="form-error">
-                {mailer.error}
-              </p>
-            )}
-            <div className="match-footer">
-              <Button
-                disabled={!live || mailer.busy || pending.length === 0}
-                onClick={() => void sendAll()}
-              >
-                <Send />
-                {mailer.busy
-                  ? "Sending…"
-                  : pending.length === 0
-                    ? "All emails sent"
-                    : `Send ${pending.length} ${pending.length === 1 ? "email" : "emails"}`}
-              </Button>
-            </div>
+            <p className="match-summary-text">
+              {prepared} of {chosen.length} prepared
+            </p>
             <span className="demo-label email-demo">
-              Direct delivery is unavailable. Review and copy each draft.
+              The app doesn&apos;t send email itself: each draft opens in your own mail app.
             </span>
           </>
         )}

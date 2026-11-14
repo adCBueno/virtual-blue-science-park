@@ -147,3 +147,15 @@ export const backendChat = createServerFn({ method: "POST" })
       return { ok: false, status: 500, message: "The assistant is unavailable right now." };
     }
   });
+
+export type { RepresentativeResult } from "./backend.server";
+
+/** Staff-only lookup of a company's representative email (see lookupRepresentative). */
+export const backendRepresentative = createServerFn({ method: "POST" })
+  .inputValidator((input: { token: string; companyId: string }) =>
+    z.object({ token, companyId: slug }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const api = await import("./backend.server");
+    return api.lookupRepresentative(data.token, data.companyId);
+  });
