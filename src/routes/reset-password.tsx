@@ -47,7 +47,7 @@ function Reset() {
         <h1>Choose a new password.</h1>
         {done ? (
           <>
-            <p>Demo recovery completed. No password was stored.</p>
+            <p>Recovery simulation complete. No password was stored.</p>
             <Button asChild>
               <Link to="/">Return to the universe</Link>
             </Button>
@@ -87,7 +87,7 @@ function Reset() {
           </form>
         ) : (
           <>
-            <p>Password recovery is simulated in this demo.</p>
+            <p>Password recovery is simulated.</p>
             <Button asChild variant="outline">
               <Link to="/auth">Back to login</Link>
             </Button>

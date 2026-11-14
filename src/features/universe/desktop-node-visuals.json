@@ -3,42 +3,49 @@
     "x": 30,
     "y": 28,
     "tone": "blue",
-    "mark": "nord"
+    "mark": "nord",
+    "label": "nord"
   },
   "ocean": {
     "x": 66,
     "y": 20,
     "tone": "teal",
-    "mark": "ocean"
+    "mark": "ocean",
+    "label": "ocean"
   },
   "aether": {
     "x": 83,
     "y": 43,
     "tone": "ink",
-    "mark": "aether"
+    "mark": "aether",
+    "label": "AETHER AI"
   },
   "modul": {
     "x": 75,
     "y": 76,
     "tone": "coral",
-    "mark": "modul"
+    "mark": "modul",
+    "label": "modul"
   },
   "baltic": {
     "x": 44,
     "y": 83,
     "tone": "blue",
-    "mark": "baltic"
+    "mark": "baltic",
+    "label": "baltic blue"
   },
   "pulse": {
     "x": 18,
     "y": 65,
     "tone": "teal",
-    "mark": "pulse"
+    "mark": "pulse",
+    "label": "pulse health"
   },
   "ericsson": {
     "x": 13,
     "y": 43,
     "tone": "ink",
-    "mark": "connective"
+    "mark": "connective",
+    "label": "connective"
   }
 }

@@ -157,7 +157,7 @@ export function ruleBasedReply(question: string, context: AssistantContext): Ass
         ? `Based on shared expertise, ${name} could explore work with ${matches.map((c) => c.name).join(", ")}. ${first.name} overlaps on ${first.shared.join(" and ")}. These are rule-based suggestions, not confirmed partnerships.`
         : `No collaboration matches are available for ${name} right now.`,
       action: { kind: "highlight", opportunityIds: [], companyIds: matches.map((c) => c.id) },
-      sources: [{ label: "Demo matching · shared expertise" }],
+      sources: [{ label: "Matching · shared expertise" }],
     };
   }
 
@@ -168,7 +168,7 @@ export function ruleBasedReply(question: string, context: AssistantContext): Ass
       simulated: true,
       answer: first
         ? `For ${name}, the most relevant ${intent.toLowerCase()} options are ${matches.map((o) => o.title).join(", ")}. ${first.summary} I have highlighted them in the universe so you can open one.`
-        : `There is no ${intent.toLowerCase()} option in the current demo set for ${name}.`,
+        : `There is no ${intent.toLowerCase()} option in the current listings for ${name}.`,
       action: { kind: "highlight", opportunityIds: matches.map((o) => o.id), companyIds: [] },
       sources: matches.map((o) => ({ label: `${o.source} · ${o.title}`, url: o.url })),
     };
@@ -183,7 +183,7 @@ export function ruleBasedReply(question: string, context: AssistantContext): Ass
     action: { kind: "none" },
     sources: [
       {
-        label: company ? "Illustrative demo profile baseline" : "Blue Science Park demo ecosystem",
+        label: company ? "Imported company profile" : "Blue Science Park ecosystem",
       },
     ],
   };
@@ -225,9 +225,7 @@ export function sourcesFor(context: AssistantContext, action: AssistantAction): 
     ? linked
     : [
         {
-          label: context.company
-            ? "Illustrative demo profile baseline"
-            : "Blue Science Park demo ecosystem",
+          label: context.company ? "Imported company profile" : "Blue Science Park ecosystem",
         },
       ];
 }

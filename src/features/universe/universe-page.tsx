@@ -1,3 +1,12 @@
+import { ExportMenu } from "@/components/export-menu";
+import { ActionBriefCard } from "@/components/action-brief-card";
+import { ImpactReports } from "@/components/impact-reports";
+import { StaffBriefing } from "@/components/staff-briefing";
+import { WeeklyDigest } from "@/components/weekly-digest";
+import { OpportunityMatchPanel } from "@/components/opportunity-match-panel";
+import { buildReport } from "@/lib/report";
+import { opportunities as opportunityCatalog } from "@/lib/ecosystem";
+import companyVisuals from "./desktop-node-visuals.json";
 import { UniverseNode } from "./universe-node";
 import { OpportunityDirectory } from "@/features/opportunities/opportunity-directory";
 import { opportunityIcons as icons } from "@/features/opportunities/opportunity-icons";
@@ -25,7 +34,6 @@ import {
   Settings2,
   SlidersHorizontal,
   Sparkles,
-  Users,
   Waves,
   X,
 } from "lucide-react";
@@ -57,44 +65,45 @@ type Connection = ReturnType<typeof collaborators>[number];
 type Detail =
   { kind: "opportunity"; item: ScoredOpportunity } | { kind: "connection"; item: Connection };
 function CompanyMark({ company }: { company: Company }) {
+  const label = Object.entries(companyVisuals).find(([id]) => id === company.id)?.[1].label;
   return (
     <span className={`company-mark mark-${company.mark}`} aria-hidden="true">
       {company.id === "nord" ? (
         <>
           <span className="nord-symbol">n</span>
-          <small>nord</small>
+          <small>{label}</small>
         </>
       ) : company.id === "ocean" ? (
         <>
           <Waves />
-          <small>ocean</small>
+          <small>{label}</small>
         </>
       ) : company.id === "aether" ? (
         <>
           <span className="aether-symbol">a.</span>
-          <small>AETHER AI</small>
+          <small>{label}</small>
         </>
       ) : company.id === "modul" ? (
         <>
           <Layers3 />
-          <small>modul</small>
+          <small>{label}</small>
         </>
       ) : company.id === "baltic" ? (
         <>
           <Waves />
-          <small>baltic blue</small>
+          <small>{label}</small>
         </>
       ) : company.id === "pulse" ? (
         <>
           <span className="pulse-symbol">
             p<span>+</span>
           </span>
-          <small>pulse health</small>
+          <small>{label}</small>
         </>
       ) : (
         <>
           <Network />
-          <small>connective</small>
+          <small>{label}</small>
         </>
       )}
     </span>
@@ -104,8 +113,6 @@ function CompanyMark({ company }: { company: Company }) {
 export function UniversePage() {
   const isMobile = useIsMobile();
   const { account, privateProfiles, publicProfiles, reviews, refresh, signOut } = useAccount();
-  const [staffOpen, setStaffOpen] = useState(false);
-  const [staffSearch, setStaffSearch] = useState("");
   const [opportunitySearch, setOpportunitySearch] = useState("");
   const displayAccount = account;
   const companyList = companyRepository.list().map((c) =>
@@ -128,7 +135,10 @@ export function UniversePage() {
     opportunityIds: [],
     companyIds: [],
   });
-  const [view, setView] = useState<"universe" | "opportunities">("universe");
+  const [view, setView] = useState<"universe" | "opportunities" | "reports" | "briefing">(
+    "universe",
+  );
+  const [matchFor, setMatchFor] = useState<Opportunity | null>(null);
   const [saved, setSaved] = useState<string[]>([]);
   const [zoom, setZoom] = useState(1);
   const [help, setHelp] = useState(false);
@@ -168,6 +178,7 @@ export function UniversePage() {
       `${c.name} ${c.industry} ${c.tags.join(" ")}`.toLowerCase().includes(search.toLowerCase()),
   );
   const focus = (company: Company) => {
+    setMatchFor(null);
     setSelectedId(company.id);
     setDetail(null);
     setCategory("All");
@@ -178,6 +189,8 @@ export function UniversePage() {
     setHighlight({ opportunityIds: [], companyIds: [] });
   };
   const back = () => {
+    setProfileOpen(false);
+    setMatchFor(null);
     setSelectedId(null);
     setDetail(null);
     setCategory("All");
@@ -218,7 +231,6 @@ export function UniversePage() {
   }, [representativeCompanyId]);
   useEffect(() => {
     setProfileOpen(false);
-    setStaffOpen(false);
     setSaved([]);
     setEditing(false);
     setDetail(null);
@@ -227,16 +239,43 @@ export function UniversePage() {
   const updated = async () => {
     await refresh();
   };
+  const staff = account?.role === "staff";
   const allOpportunities = (
     selected
       ? matches
-      : recommendationService.recommendations(companyList[0] ?? companies[0], [], category)
+      : staff
+        ? opportunityCatalog
+            .filter((item) => category === "All" || item.category === category)
+            .map((item) => ({ ...item, score: 0 }))
+        : recommendationService.recommendations(companyList[0] ?? companies[0], [], category)
   ).filter((o) =>
     `${o.title} ${o.category} ${o.source}`.toLowerCase().includes(opportunitySearch.toLowerCase()),
   );
+  const audience =
+    account?.role === "staff"
+      ? "staff"
+      : account?.role === "representative"
+        ? "representative"
+        : "public";
+  const reportFor = (company: Company | null) =>
+    buildReport(
+      company
+        ? {
+            company,
+            audience,
+            opportunities: recommendationService.recommendations(company, company.interests),
+            connections: recommendationService.collaborators(company, companyList),
+          }
+        : { company: null, audience, opportunities: opportunityCatalog, companies: companyList },
+    );
+  const shareActions = staff && (
+    <span className="share-actions">
+      <ExportMenu compact={isMobile} getReport={() => reportFor(focusedCompany)} />
+    </span>
+  );
   return (
     <div
-      className={`app-shell fullscreen-ecosystem ${view === "opportunities" ? "directory-view" : ""} ${selected ? "company-focused" : ""} ${editing ? "profile-editing" : ""} ${chatOpen ? "chat-open" : ""}`}
+      className={`app-shell fullscreen-ecosystem ${view !== "universe" ? "directory-view" : ""} ${selected ? "company-focused" : ""} ${editing ? "profile-editing" : ""} ${chatOpen ? "chat-open" : ""}`}
     >
       <header className="topbar">
         <a href="/" className="brand" aria-label="Blue Science Park home">
@@ -247,16 +286,19 @@ export function UniversePage() {
         <nav className="main-nav" aria-label="Main navigation">
           <Button
             variant="nav"
-            data-active={view === "universe"}
-            onClick={() => setView("universe")}
+            data-active={view === "universe" && !selected}
+            onClick={back}
           >
             <Globe2 />
-            Universe
+            The Park
           </Button>
           <Button
             variant="nav"
             data-active={view === "opportunities"}
-            onClick={() => setView("opportunities")}
+            onClick={() => {
+              back();
+              setView("opportunities");
+            }}
           >
             <Sparkles />
             Opportunities
@@ -267,26 +309,37 @@ export function UniversePage() {
               My Company
             </Button>
           )}
-          {displayAccount?.role === "staff" && (
-            <Button variant="nav" onClick={() => setStaffOpen(true)}>
-              <Users />
-              Staff Workspace
-            </Button>
+          {staff && (
+            <>
+              <Button
+                variant="nav"
+                data-active={view === "briefing"}
+                onClick={() => {
+                  back();
+                  setMatchFor(null);
+                  setView("briefing");
+                }}
+              >
+                Briefing
+              </Button>
+              <Button
+                variant="nav"
+                data-active={view === "reports"}
+                onClick={() => {
+                  back();
+                  setMatchFor(null);
+                  setView("reports");
+                }}
+              >
+                Reports
+              </Button>
+            </>
           )}
         </nav>
         <div className="account">
           {account ? (
             <>
-              <span className="account-label">
-                {account.name}
-                <small>
-                  {account.role === "staff"
-                    ? "Blue Science Park Staff"
-                    : account.role === "representative"
-                      ? "Company Representative"
-                      : "Account awaiting assignment"}
-                </small>
-              </span>
+              <span className="account-label">{account.name}</span>
               <Button variant="nav" onClick={() => void signOut()}>
                 Log Out
               </Button>
@@ -333,63 +386,66 @@ export function UniversePage() {
           className={`universe-section ${selected ? "is-focused" : ""}`}
           aria-label="Interactive innovation ecosystem"
         >
-          <div className="universe-toolbar">
-            <div className="toolbar-left">
-              {selected ? (
-                <Button variant="ghost" onClick={back} className="back-button">
-                  <ArrowLeft />
-                  Back to Universe
+          {view !== "reports" && view !== "briefing" && (
+            <div className="universe-toolbar">
+              <div className="toolbar-left">
+                {selected ? (
+                  <Button variant="ghost" onClick={back} className="back-button">
+                    <ArrowLeft />
+                    Back to Universe
+                  </Button>
+                ) : (
+                  <>
+                    <label className="search-field">
+                      <Search size={17} />
+                      <input
+                        aria-label="Search companies"
+                        placeholder="Search the ecosystem"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                      />
+                      <span>⌕</span>
+                    </label>
+                    <label className="sector-select">
+                      <SlidersHorizontal size={15} />
+                      <select
+                        aria-label="Filter by sector"
+                        value={sector}
+                        onChange={(e) => setSector(e.target.value as Sector)}
+                      >
+                        {[
+                          "All sectors",
+                          "Marine technology",
+                          "Digital solutions",
+                          "Industry & engineering",
+                        ].map((s) => (
+                          <option key={s}>{s}</option>
+                        ))}
+                      </select>
+                      <ChevronDown size={14} />
+                    </label>
+                  </>
+                )}
+              </div>
+              <div className="toolbar-right">
+                {view === "universe" && shareActions}
+                <span className="company-count">
+                  {selected
+                    ? `${matches.length + connections.length} relevant connections`
+                    : `${visibleCompanies.length} companies in your universe`}
+                </span>
+                <Button
+                  variant="tool"
+                  size="icon"
+                  aria-label="About the workspace"
+                  title="About the workspace"
+                  onClick={() => setHelp(true)}
+                >
+                  <CircleHelp />
                 </Button>
-              ) : (
-                <>
-                  <label className="search-field">
-                    <Search size={17} />
-                    <input
-                      aria-label="Search companies"
-                      placeholder="Search the ecosystem"
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-                    <span>⌕</span>
-                  </label>
-                  <label className="sector-select">
-                    <SlidersHorizontal size={15} />
-                    <select
-                      aria-label="Filter by sector"
-                      value={sector}
-                      onChange={(e) => setSector(e.target.value as Sector)}
-                    >
-                      {[
-                        "All sectors",
-                        "Marine technology",
-                        "Digital solutions",
-                        "Industry & engineering",
-                      ].map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={14} />
-                  </label>
-                </>
-              )}
+              </div>
             </div>
-            <div className="toolbar-right">
-              <span className="company-count">
-                {selected
-                  ? `${matches.length + connections.length} relevant connections`
-                  : `${visibleCompanies.length} companies in your universe`}
-              </span>
-              <Button
-                variant="tool"
-                size="icon"
-                aria-label="About this prototype"
-                title="About this prototype"
-                onClick={() => setHelp(true)}
-              >
-                <CircleHelp />
-              </Button>
-            </div>
-          </div>
+          )}
 
           {isMobile && selected && view === "universe" && (
             <div className="mobile-focus-head">
@@ -422,13 +478,34 @@ export function UniversePage() {
             </div>
           )}
 
-          {view === "opportunities" ? (
+          {staff && view === "briefing" ? (
+            <StaffBriefing
+              companies={companyList}
+              opportunities={opportunityCatalog}
+              staffName={account.name}
+              profileChanges={privateProfiles.map((p) => ({
+                companyId: p.company_id,
+                at: p.updated_at,
+                label: "Profile draft updated",
+              }))}
+              onOpenCompany={focus}
+            />
+          ) : staff && view === "reports" ? (
+            <ImpactReports />
+          ) : view === "opportunities" ? (
             <OpportunityDirectory
-              companyName={focusedCompany?.name}
+              actions={shareActions}
+              staff={staff}
+              companyName={undefined}
               search={opportunitySearch}
               onSearch={setOpportunitySearch}
               items={allOpportunities}
               onSelect={(item) => {
+                if (staff) {
+                  setDetail(null);
+                  setMatchFor(item);
+                  return;
+                }
                 if (!selected) setSelectedId(companyList[0]?.id ?? null);
                 setDetail({ kind: "opportunity", item });
               }}
@@ -449,6 +526,27 @@ export function UniversePage() {
                   editing={editing}
                   setEditing={setEditing}
                   updated={updated}
+                  digest={
+                    <WeeklyDigest
+                      canMarkInterest={
+                        account?.role === "representative" && account.companyId === selected.id
+                      }
+                      company={focusedCompany ?? selected}
+                      companies={companyList}
+                      saved={saved}
+                      onToggleSave={(id) =>
+                        setSaved((list) =>
+                          list.includes(id) ? list.filter((item) => item !== id) : [...list, id],
+                        )
+                      }
+                      onOpen={(item) => {
+                        setDetail({ kind: "opportunity", item });
+                        setChatOpen(false);
+                        if (isMobile) setFocusTab("map");
+                      }}
+                      onFocusCompany={focus}
+                    />
+                  }
                   pendingReview={reviews.some(
                     (r) => r.companyId === selected.id && r.status === "pending",
                   )}
@@ -642,7 +740,7 @@ export function UniversePage() {
                         : "A balanced mix of possibilities"}
                     </span>
                   </span>
-                  <span className="demo-label">Demo matching</span>
+                  <span className="demo-label">Matching</span>
                 </div>
               )}
               <div className="canvas-tools">
@@ -771,9 +869,21 @@ export function UniversePage() {
                   <dd>{detail.item.requirements}</dd>
                 </div>
               </dl>
+              <ActionBriefCard opportunity={detail.item} />
+              {staff && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setMatchFor(detail.item as ScoredOpportunity);
+                    setDetail(null);
+                  }}
+                >
+                  Find all companies that fit
+                </Button>
+              )}
               <span className="detail-demo">
-                Illustrative demo listing. Dates and requirements are not verified; source links
-                lead to the organisation’s website.
+                Dates and requirements are not verified. Source links lead to the organisation’s
+                website.
               </span>
               <Button asChild className="source-button">
                 <a href={detail.item.url} target="_blank" rel="noreferrer">
@@ -831,7 +941,7 @@ export function UniversePage() {
               </p>
               <h3 className="detail-subheading">Why this connection is suggested</h3>
               <p>
-                Demo matching identified {detail.item.shared.length} shared expertise areas and
+                Matching identified {detail.item.shared.length} shared expertise areas and
                 complementary specialisms. This is a rule-based suggestion, not a live AI
                 recommendation.
               </p>
@@ -848,7 +958,7 @@ export function UniversePage() {
         </aside>
       )}
 
-      {profileOpen && selected && (
+      {view === "universe" && profileOpen && selected && (
         <CompanyEditor
           key={selected.id}
           company={focusedCompany ?? selected}
@@ -862,67 +972,24 @@ export function UniversePage() {
           canRequestReview={account?.role === "staff"}
         />
       )}
-      {staffOpen && displayAccount?.role === "staff" && (
-        <aside className="detail-panel staff-workspace" aria-label="Staff workspace">
-          <div className="detail-top">
-            <span className="eyebrow">BLUE SCIENCE PARK STAFF</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Close staff workspace"
-              onClick={() => setStaffOpen(false)}
-            >
-              <X />
-            </Button>
-          </div>
-          <h2>Member companies</h2>
-          <label className="editor-field">
-            Search companies
-            <input value={staffSearch} onChange={(e) => setStaffSearch(e.target.value)} />
-          </label>
-          <p>{reviews.filter((r) => r.status === "pending").length} pending profile reviews</p>
-          {companyList
-            .filter((c) => c.name.toLowerCase().includes(staffSearch.toLowerCase()))
-            .map((c) => {
-              const privateProfile = privateProfiles.find((p) => p.company_id === c.id);
-              return (
-                <div className="staff-company-row" key={c.id}>
-                  <strong>{c.name}</strong>
-                  <span className="review-status">
-                    {privateProfile?.review_status ?? "Not reviewed"}
-                  </span>
-                  <small>
-                    {privateProfile
-                      ? `Updated ${new Date(privateProfile.updated_at).toLocaleDateString()}`
-                      : "Baseline profile · Not yet updated"}
-                  </small>
-                  <small>
-                    Source:{" "}
-                    {publicProfiles.find((p) => p.company_id === c.id)?.provenance ??
-                      "Illustrative demo baseline"}
-                  </small>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      focus(c);
-                      setStaffOpen(false);
-                      setProfileOpen(true);
-                    }}
-                  >
-                    Edit Profile / Send to Company
-                    <ArrowUpRight />
-                  </Button>
-                </div>
-              );
-            })}
-        </aside>
+      {staff && matchFor && (
+        <OpportunityMatchPanel
+          key={matchFor.id}
+          opportunity={matchFor}
+          companies={companyList}
+          sender={account.name}
+          onClose={() => setMatchFor(null)}
+          onFocusCompany={(company) => {
+            setMatchFor(null);
+            focus(company);
+          }}
+        />
       )}
       <AiAssistant
         key={account?.id ?? "guest"}
         company={focusedCompany ?? selected}
         onAction={applyAssistantAction}
-        shifted={Boolean(detail)}
+        shifted={Boolean(detail || matchFor)}
         open={chatOpen}
         setOpen={setChatOpen}
       />
@@ -948,9 +1015,9 @@ export function UniversePage() {
             </div>
             <h2 id="about-title">A glimpse of what’s possible.</h2>
             <p>
-              This is an interactive prototype. Companies, opportunity dates, and requirements are
-              illustrative. Recommendations use shared expertise and selected interests, not live
-              AI. Suggested collaborations are not confirmed partnerships.
+              This workspace uses mock company and opportunity data. Recommendations use shared
+              expertise and selected interests, not live AI. Suggested collaborations are not
+              confirmed partnerships.
             </p>
             <p>
               Authorised company profile changes are saved to your account. Saved opportunities last

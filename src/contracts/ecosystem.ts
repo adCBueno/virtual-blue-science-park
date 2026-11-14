@@ -21,7 +21,6 @@ export const companySchema = z.strictObject({
   id: idSchema,
   industry: text,
   sector: sectorSchema,
-  isDemo: z.boolean(),
 });
 
 export const profileFieldSchema = z.enum([
@@ -87,7 +86,6 @@ export const opportunitySchema = z.strictObject({
   schedulingLabel: text.optional(),
   eligibility: text,
   uncertainty: text.optional(),
-  isDemo: z.boolean(),
 });
 
 export const recommendationSchema = z.strictObject({
@@ -105,7 +103,6 @@ export const recommendationSchema = z.strictObject({
   ),
   score: z.number().min(0).max(100).optional(),
   status: z.literal("suggested"),
-  isDemo: z.boolean(),
 });
 
 export const userSchema = z.discriminatedUnion("role", [

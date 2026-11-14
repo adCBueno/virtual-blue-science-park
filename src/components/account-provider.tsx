@@ -15,7 +15,7 @@ function snapshot() {
       ...profileRecord(profile),
       provenance: Object.keys(profile.evidence).length
         ? "Company-provided information"
-        : "Illustrative demo baseline",
+        : "Imported profile",
     })),
     privateProfiles: companyRepository.privateProfiles().map((profile) => ({
       ...profileRecord(profile),
@@ -45,7 +45,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     reviews: [],
     publicProfiles: companyRepository.baselineProfiles().map((profile) => ({
       ...profileRecord(profile),
-      provenance: "Illustrative demo baseline",
+      provenance: "Imported profile",
     })),
   }));
   const router = useRouter();

@@ -1,4 +1,16 @@
 [
-  { "id": "demo-nord", "name": "Demo preview", "role": "representative", "companyId": "nord" },
-  { "id": "demo-staff", "name": "Demo preview", "role": "staff", "companyId": null }
+  {
+    "id": "demo-nord",
+    "name": "Nord Sensor Representative",
+    "role": "representative",
+    "companyId": "nord",
+    "email": "demo-nord@example.test"
+  },
+  {
+    "id": "demo-staff",
+    "name": "Blue Science Park Staff",
+    "role": "staff",
+    "companyId": null,
+    "email": "demo-staff@example.test"
+  }
 ]

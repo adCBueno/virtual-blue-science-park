@@ -13,9 +13,8 @@
     "sourceLabel": "Vinnova",
     "sourceUrl": "https://www.vinnova.se/en/",
     "deadlineOn": "2026-12-18",
-    "schedulingLabel": "Demo deadline · 18 December 2026",
-    "eligibility": "Swedish SMEs developing an innovative industrial solution. A project plan and co-financing proposal are required.",
-    "isDemo": true
+    "schedulingLabel": "deadline · 18 December 2026",
+    "eligibility": "Swedish SMEs developing an innovative industrial solution. A project plan and co-financing proposal are required."
   },
   {
     "id": "ocean-funding",
@@ -31,9 +30,8 @@
     "sourceLabel": "Horizon Europe",
     "sourceUrl": "https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en",
     "deadlineOn": "2027-01-22",
-    "schedulingLabel": "Demo deadline · 22 January 2027",
-    "eligibility": "A collaborative European research or innovation project with a measurable marine impact.",
-    "isDemo": true
+    "schedulingLabel": "deadline · 22 January 2027",
+    "eligibility": "A collaborative European research or innovation project with a measurable marine impact."
   },
   {
     "id": "digital-funding",
@@ -49,9 +47,8 @@
     "sourceLabel": "Vinnova",
     "sourceUrl": "https://www.vinnova.se/en/",
     "deadlineOn": "2027-01-15",
-    "schedulingLabel": "Demo deadline · 15 January 2027",
-    "eligibility": "An early-stage digital solution, a Swedish business entity, and a clear validation plan.",
-    "isDemo": true
+    "schedulingLabel": "deadline · 15 January 2027",
+    "eligibility": "An early-stage digital solution, a Swedish business entity, and a clear validation plan."
   },
   {
     "id": "marine-event",
@@ -67,9 +64,8 @@
     "sourceLabel": "Blue Science Park",
     "sourceUrl": "https://www.bluesciencepark.se/",
     "eventOn": "2027-02-11",
-    "schedulingLabel": "Demo event · 11 February 2027",
-    "eligibility": "Open to organisations working in marine technology. Registration required.",
-    "isDemo": true
+    "schedulingLabel": "event · 11 February 2027",
+    "eligibility": "Open to organisations working in marine technology. Registration required."
   },
   {
     "id": "industry-event",
@@ -85,9 +81,8 @@
     "sourceLabel": "RISE",
     "sourceUrl": "https://www.ri.se/en",
     "eventOn": "2026-12-03",
-    "schedulingLabel": "Demo event · 3 December 2026",
-    "eligibility": "Open to industry representatives, researchers, and technology providers.",
-    "isDemo": true
+    "schedulingLabel": "event · 3 December 2026",
+    "eligibility": "Open to industry representatives, researchers, and technology providers."
   },
   {
     "id": "ai-workshop",
@@ -104,9 +99,8 @@
     "sourceLabel": "Tech Concept Lab",
     "sourceUrl": "https://www.bluesciencepark.se/",
     "eventOn": "2026-11-26",
-    "schedulingLabel": "Demo workshop · 26 November 2026",
-    "eligibility": "Bring a real-world data challenge. No previous AI experience required.",
-    "isDemo": true
+    "schedulingLabel": "workshop · 26 November 2026",
+    "eligibility": "Bring a real-world data challenge. No previous AI experience required."
   },
   {
     "id": "ocean-workshop",
@@ -122,9 +116,8 @@
     "sourceLabel": "Blue Science Park",
     "sourceUrl": "https://www.bluesciencepark.se/",
     "eventOn": "2026-12-02",
-    "schedulingLabel": "Demo workshop · 2 December 2026",
-    "eligibility": "For marine innovators and sustainability teams. A product concept is helpful.",
-    "isDemo": true
+    "schedulingLabel": "workshop · 2 December 2026",
+    "eligibility": "For marine innovators and sustainability teams. A product concept is helpful."
   },
   {
     "id": "network",
@@ -145,9 +138,8 @@
     "sourceLabel": "Blue Science Park",
     "sourceUrl": "https://www.bluesciencepark.se/",
     "eventOn": "2026-11-25",
-    "schedulingLabel": "Demo meetup · 25 November 2026",
-    "eligibility": "Open to ecosystem members and invited guests. Registration required.",
-    "isDemo": true
+    "schedulingLabel": "meetup · 25 November 2026",
+    "eligibility": "Open to ecosystem members and invited guests. Registration required."
   },
   {
     "id": "test-industry",
@@ -162,9 +154,8 @@
     "industries": [],
     "sourceLabel": "RISE",
     "sourceUrl": "https://www.ri.se/en",
-    "schedulingLabel": "Demo opportunity · Rolling applications",
-    "eligibility": "A working prototype and a defined testing challenge. Technical scoping is required before admission.",
-    "isDemo": true
+    "schedulingLabel": "opportunity · Rolling applications",
+    "eligibility": "A working prototype and a defined testing challenge. Technical scoping is required before admission."
   },
   {
     "id": "test-ocean",
@@ -179,9 +170,8 @@
     "industries": [],
     "sourceLabel": "Marine Technology Center",
     "sourceUrl": "https://www.bluesciencepark.se/",
-    "schedulingLabel": "Demo opportunity · Rolling applications",
-    "eligibility": "A marine-ready prototype and a safety assessment. Test plans are reviewed individually.",
-    "isDemo": true
+    "schedulingLabel": "opportunity · Rolling applications",
+    "eligibility": "A marine-ready prototype and a safety assessment. Test plans are reviewed individually."
   },
   {
     "id": "test-health",
@@ -195,8 +185,7 @@
     "industries": [],
     "sourceLabel": "RISE",
     "sourceUrl": "https://www.ri.se/en",
-    "schedulingLabel": "Demo opportunity · Rolling applications",
-    "eligibility": "A digital health prototype, a privacy impact assessment, and a defined clinical use case.",
-    "isDemo": true
+    "schedulingLabel": "opportunity · Rolling applications",
+    "eligibility": "A digital health prototype, a privacy impact assessment, and a defined clinical use case."
   }
 ]

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDown, ExternalLink, Globe2, Pencil, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { categories, type Company } from "@/lib/ecosystem";
@@ -44,6 +44,7 @@ export function CompanyProfilePanel({
   setEditing,
   updated,
   pendingReview,
+  digest,
   onClose,
 }: {
   company: Company;
@@ -56,6 +57,7 @@ export function CompanyProfilePanel({
   setEditing: (editing: boolean) => void;
   updated: () => Promise<void>;
   pendingReview: boolean;
+  digest?: ReactNode;
   onClose: () => void;
 }) {
   const [open, setOpen] = useState<SectionKey | "evidence" | null>(null);
@@ -136,6 +138,7 @@ export function CompanyProfilePanel({
       </div>
 
       <div className="panel-scroll">
+        {!editing && digest}
         {editing ? (
           <ProfileForm
             key={company.id}
@@ -228,7 +231,7 @@ export function CompanyProfilePanel({
 
       <div className="panel-foot">
         <span className="demo-label panel-demo">
-          Illustrative demo profile · not verified AI research
+          Company profile · source information appears by section
         </span>
         {pendingReview && canEdit && (
           <span className="review-notice">A review request is pending with your team.</span>

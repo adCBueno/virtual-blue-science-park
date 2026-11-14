@@ -304,9 +304,7 @@ export function AiAssistant({
               <ArrowUp />
             </Button>
           </form>
-          <span className="chat-demo">
-            Demo assistant · answers use illustrative prototype data
-          </span>
+          <span className="chat-demo">Assistant · answers use mock data</span>
         </aside>
       )}
     </>

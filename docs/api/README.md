@@ -12,12 +12,12 @@
 
 | Definition                             | Required data and key optional fields                                                                                                                                        |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Company                                | ID, industry, sector, and demo flag.                                                                                                                                         |
+| Company                                | ID, industry, sector.                                                                                                                                         |
 | CompanyProfile                         | Company ID, display name, technologies and interests arrays, evidence map, and published visibility. Descriptive sections such as customer groups are optional.              |
 | PrivateCompanyProfile                  | Same profile fields with private visibility and optional notes. The published schema rejects private notes.                                                                  |
 | ProfileEvidence                        | Classification is required. Source label, URL, retrieval date, and uncertainty are optional. An absent entry means the source supplied no evidence metadata.                 |
-| Opportunity                            | ID, title, description, category, technologies, industries, source label and URL, eligibility, and demo flag. Scheduling dates, display label, and uncertainty are optional. |
-| Recommendation                         | Company ID, target type and ID, explanation, factors, suggested status, and demo flag. Score is optional.                                                                    |
+| Opportunity                            | ID, title, description, category, technologies, industries, source label and URL, eligibility. Scheduling dates, display label, and uncertainty are optional. |
+| Recommendation                         | Company ID, target type and ID, explanation, factors, suggested status. Score is optional.                                                                    |
 | User                                   | ID, name, role, and company association. Representatives require a company ID. Staff and unassigned users use null. A visitor has no user record.                            |
 | ProfileReviewRequest                   | ID, company, requester, recipient, status, and creation timestamp.                                                                                                           |
 | ChatMessage, ChatRequest, ChatResponse | A message supplies role and text. A request supplies question, active company ID or null, and history. A response supplies answer, action, sources, and the simulated flag.  |

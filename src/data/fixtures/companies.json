@@ -2,43 +2,36 @@
   {
     "id": "nord",
     "industry": "Intelligent sensing",
-    "sector": "Industry & engineering",
-    "isDemo": true
+    "sector": "Industry & engineering"
   },
   {
     "id": "ocean",
     "industry": "Marine technology",
-    "sector": "Marine technology",
-    "isDemo": true
+    "sector": "Marine technology"
   },
   {
     "id": "aether",
     "industry": "Applied artificial intelligence",
-    "sector": "Digital solutions",
-    "isDemo": true
+    "sector": "Digital solutions"
   },
   {
     "id": "modul",
     "industry": "Manufacturing automation",
-    "sector": "Industry & engineering",
-    "isDemo": true
+    "sector": "Industry & engineering"
   },
   {
     "id": "baltic",
     "industry": "Sustainable ocean energy",
-    "sector": "Marine technology",
-    "isDemo": true
+    "sector": "Marine technology"
   },
   {
     "id": "pulse",
     "industry": "Connected healthcare",
-    "sector": "Digital solutions",
-    "isDemo": true
+    "sector": "Digital solutions"
   },
   {
     "id": "ericsson",
     "industry": "Next-generation connectivity",
-    "sector": "Digital solutions",
-    "isDemo": true
+    "sector": "Digital solutions"
   }
 ]

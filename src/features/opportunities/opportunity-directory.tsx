@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Opportunity } from "@/lib/ecosystem";
@@ -5,6 +6,8 @@ import { opportunityIcons as icons } from "./opportunity-icons";
 
 type Item = Opportunity & { score: number };
 type Props = {
+  actions?: ReactNode;
+  staff?: boolean;
   companyName: string | undefined;
   search: string;
   onSearch: (value: string) => void;
@@ -12,20 +15,30 @@ type Props = {
   onSelect: (item: Item) => void;
 };
 
-export function OpportunityDirectory({ companyName, search, onSearch, items, onSelect }: Props) {
+export function OpportunityDirectory({
+  companyName,
+  search,
+  onSearch,
+  items,
+  onSelect,
+  actions,
+  staff,
+}: Props) {
   return (
     <div className="opportunity-directory">
       <div className="directory-heading">
         <div>
           <span className="eyebrow">CURATED POSSIBILITIES</span>
-          <h2>{companyName ? `For ${companyName}` : "Explore opportunities"}</h2>
+          <h2>{companyName ? `For ${companyName}` : "Opportunity listings"}</h2>
         </div>
-        <span className="demo-label">Illustrative demo opportunities</span>
+        <div className="directory-tools">
+          {actions}
+        </div>
       </div>
       <label className="editor-field opportunity-search">
-        Search opportunities
+        <span className="text-base font-semibold">Search opportunities</span>
         <input
-          aria-label="Search opportunities"
+          placeholder="Search by title, category, or source"
           value={search}
           onChange={(e) => onSearch(e.target.value)}
         />
@@ -49,6 +62,7 @@ export function OpportunityDirectory({ companyName, search, onSearch, items, onS
                 </small>
                 <strong>{item.title}</strong>
                 <span>{item.date}</span>
+                {staff && <span className="card-match-hint">Find companies that fit →</span>}
               </span>
               <ArrowUpRight />
             </Button>

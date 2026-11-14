@@ -36,8 +36,8 @@ export function CompanyEditor({
         {privateProfile ? "Private draft · only this company and staff" : "Published information"}
       </span>
       <p className="detail-demo">
-        Baseline: illustrative demo information, not verified AI research. Published edits are
-        labelled as company-provided information.
+        Profile information comes from the data source. Published edits are labelled as
+        company-provided information.
       </p>
       <ProfileForm
         company={company}

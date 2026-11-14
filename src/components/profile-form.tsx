@@ -95,7 +95,7 @@ export function ProfileForm({
         throw new Error(
           "No registered company account yet. A representative account must be assigned first.",
         );
-      setRecipient(company.name + " demo account");
+      setRecipient(recipient.name);
       setConfirmation("send");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to find the company account.");

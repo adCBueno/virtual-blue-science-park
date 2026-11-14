@@ -20,16 +20,12 @@
             "Digital solutions",
             "Industry & engineering"
           ]
-        },
-        "isDemo": {
-          "type": "boolean"
         }
       },
       "required": [
         "id",
         "industry",
-        "sector",
-        "isDemo"
+        "sector"
       ],
       "additionalProperties": false
     },
@@ -425,9 +421,6 @@
         "uncertainty": {
           "type": "string",
           "minLength": 1
-        },
-        "isDemo": {
-          "type": "boolean"
         }
       },
       "required": [
@@ -439,8 +432,7 @@
         "industries",
         "sourceLabel",
         "sourceUrl",
-        "eligibility",
-        "isDemo"
+        "eligibility"
       ],
       "additionalProperties": false
     },
@@ -531,9 +523,6 @@
         "status": {
           "type": "string",
           "const": "suggested"
-        },
-        "isDemo": {
-          "type": "boolean"
         }
       },
       "required": [
@@ -541,8 +530,7 @@
         "target",
         "explanation",
         "factors",
-        "status",
-        "isDemo"
+        "status"
       ],
       "additionalProperties": false
     },

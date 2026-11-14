@@ -71,7 +71,7 @@ function Auth() {
             : "Your next connection starts here."}
         </p>
         {sent ? (
-          <div className="auth-notice">Demo mode. No recovery email was sent.</div>
+          <div className="auth-notice">Recovery is simulated. No email was sent.</div>
         ) : (
           <form onSubmit={submit}>
             <label className="editor-field">

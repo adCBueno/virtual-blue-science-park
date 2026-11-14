@@ -29,7 +29,7 @@ const opportunityIds = new Set(listings.map(({ id }) => id));
 describe("ecosystem fixtures", () => {
   it("preserves the legacy catalogue, display content and order", () => {
     expect(companyRecords).toEqual(
-      companies.map(({ id, industry, sector }) => ({ id, industry, sector, isDemo: true })),
+      companies.map(({ id, industry, sector }) => ({ id, industry, sector })),
     );
     expect(
       profiles.map(({ companyId, name, description, technologies, opportunityInterests }) => ({
@@ -75,10 +75,15 @@ describe("ecosystem fixtures", () => {
           y: z.number().min(0).max(100),
           tone: z.string().min(1),
           mark: z.string().min(1),
+          label: z.string().min(1),
         }),
       )
       .parse(readJson("../features/universe/desktop-node-visuals.json"));
-    expect(visuals).toEqual(
+    expect(
+      Object.fromEntries(
+        Object.entries(visuals).map(([id, { x, y, tone, mark }]) => [id, { x, y, tone, mark }]),
+      ),
+    ).toEqual(
       Object.fromEntries(companies.map(({ id, x, y, tone, mark }) => [id, { x, y, tone, mark }])),
     );
   });

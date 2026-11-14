@@ -15,8 +15,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "nord",
@@ -34,8 +33,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "ocean",
@@ -53,8 +51,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "ocean",
@@ -72,8 +69,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "aether",
@@ -91,8 +87,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "aether",
@@ -110,8 +105,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "modul",
@@ -129,8 +123,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "modul",
@@ -148,8 +141,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "baltic",
@@ -167,8 +159,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "baltic",
@@ -185,8 +176,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "pulse",
@@ -204,8 +194,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "pulse",
@@ -222,8 +211,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "ericsson",
@@ -241,8 +229,7 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   },
   {
     "companyId": "ericsson",
@@ -260,7 +247,6 @@
         ]
       }
     ],
-    "status": "suggested",
-    "isDemo": true
+    "status": "suggested"
   }
 ]

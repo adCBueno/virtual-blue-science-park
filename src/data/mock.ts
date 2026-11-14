@@ -24,7 +24,9 @@ import {
   type AssistantContext,
 } from "@/lib/assistant";
 
-const users = z.array(userSchema).parse(usersJson);
+const users = z
+  .array(z.object({ email: z.email(), account: userSchema }))
+  .parse(usersJson.map(({ email, ...account }) => ({ email, account })));
 const storageKey = "bsp-demo-workspace";
 const stateSchema = z.object({
   userId: z.string().nullable(),
@@ -63,7 +65,8 @@ function write(state: State) {
     /* Storage is optional. */
   }
 }
-const actor = (state: State) => users.find((user) => user.id === state.userId) ?? null;
+const actor = (state: State) =>
+  users.find(({ account }) => account.id === state.userId)?.account ?? null;
 const published = (state: State, id: string) =>
   state.published.find((profile) => profile.companyId === id) ??
   catalogue.profiles.find((profile) => profile.companyId === id);
@@ -213,10 +216,11 @@ export const opportunityRepository = {
 export const recommendationService = { recommendations, collaborators };
 
 export const authService = {
+  accountEmails: () => users.map(({ email }) => email),
   currentUser: () => actor(read()),
   signIn(email: string) {
-    const user = users.find((item) => email.trim().toLowerCase() === `${item.id}@example.test`);
-    if (!user) throw new Error("Use demo-nord@example.test or demo-staff@example.test.");
+    const user = users.find((entry) => email.trim().toLowerCase() === entry.email)?.account;
+    if (!user) throw new Error("This email does not match an available account.");
     write({ ...read(), preview: false, userId: user.id });
   },
   signOut() {
@@ -235,7 +239,9 @@ export const reviewService = {
   },
   resolveRecipient(id: string) {
     if (actor(read())?.role !== "staff") throw new Error("Only staff can send reviews.");
-    return users.find((user) => user.role === "representative" && user.companyId === id);
+    return users.find(
+      ({ account }) => account.role === "representative" && account.companyId === id,
+    )?.account;
   },
   request(id: string) {
     const state = read();
