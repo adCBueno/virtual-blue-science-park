@@ -1,14 +1,12 @@
 import { useState, type ReactNode } from "react";
-import { ChevronDown, ExternalLink, Globe2, Pencil, Send, X } from "lucide-react";
+import { ExternalLink, Globe2, Pencil, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { categories, type Company } from "@/lib/ecosystem";
 import type { PublicProfileRecord, PrivateProfileRecord } from "@/lib/profile-sections";
 import {
-  evidenceRows,
   profileSections,
   statusLabels,
   type ProfileRecord,
-  type SectionKey,
   type SectionMeta,
 } from "@/lib/profile-sections";
 import { review as reviewService } from "@/data/services";
@@ -62,7 +60,6 @@ export function CompanyProfilePanel({
   digest?: ReactNode;
   onClose: () => void;
 }) {
-  const [open, setOpen] = useState<SectionKey | "evidence" | null>(null);
   const [intent, setIntent] = useState<EditorIntent>("edit");
   const record: ProfileRecord = privateProfile ??
     profile ?? {
@@ -79,13 +76,10 @@ export function CompanyProfilePanel({
   const sections = profileSections(record);
   const about = sections.find((s) => s.key === "about");
   const expandable = sections.filter((s) => s.key !== "about");
-  const evidence = evidenceRows(sections);
   const start = (next: EditorIntent) => {
     setIntent(next);
     setEditing(true);
   };
-  const toggle = (key: SectionKey | "evidence") =>
-    setOpen((current) => (current === key ? null : key));
 
   return (
     <aside
@@ -158,79 +152,29 @@ export function CompanyProfilePanel({
         ) : backendProfile(company.id) ? (
           <BackendClaims companyId={company.id} />
         ) : (
-          <div className="profile-accordion">
-            {expandable.map((section) => (
-              <div className="profile-section" key={section.key} data-open={open === section.key}>
-                <button
-                  type="button"
-                  className="section-toggle"
-                  aria-expanded={open === section.key}
-                  onClick={() => toggle(section.key)}
-                >
-                  <span>{section.label}</span>
-                  <em>{statusLabels[section.meta.status]}</em>
-                  <ChevronDown size={13} />
-                </button>
-                <div className="section-body">
-                  <div>
-                    {section.key === "interests" ? (
-                      <span className="section-chips">
-                        {categories
-                          .filter((c) => record.interests.includes(c))
-                          .map((c) => (
-                            <small key={c}>{c}</small>
-                          ))}
-                        {!categories.some((c) => record.interests.includes(c)) && (
-                          <small>Balanced discovery</small>
-                        )}
-                      </span>
-                    ) : (
-                      <p>{section.body}</p>
-                    )}
-                    <Provenance meta={section.meta} />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div className="profile-section" data-open={open === "evidence"}>
-              <button
-                type="button"
-                className="section-toggle"
-                aria-expanded={open === "evidence"}
-                onClick={() => toggle("evidence")}
-              >
-                <span>Evidence & Sources</span>
-                <em>{evidence.length} records</em>
-                <ChevronDown size={13} />
-              </button>
-              <div className="section-body">
-                <div>
-                  <ul className="evidence-list">
-                    {evidence.map((row) => (
-                      <li className={`provenance provenance-${row.status}`} key={row.label}>
-                        <span className="provenance-status">{statusLabels[row.status]}</span>
-                        <span className="evidence-label">{row.label}</span>
-                        <span className="provenance-source">
-                          {row.source}
-                          {row.retrieved_at ? ` · retrieved ${row.retrieved_at}` : ""}
-                        </span>
-                        {row.url && (
-                          <a
-                            className="provenance-link"
-                            href={row.url}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Source
-                            <ExternalLink size={10} />
-                          </a>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
+          <div className="profile-details">
+            {expandable
+              .filter((section) => section.meta.status !== "missing")
+              .map((section) => (
+                <section className="profile-detail" key={section.key}>
+                  <h3>
+                    {section.label}
+                    <em>{statusLabels[section.meta.status]}</em>
+                  </h3>
+                  {section.key === "interests" ? (
+                    <span className="section-chips">
+                      {categories
+                        .filter((c) => record.interests.includes(c))
+                        .map((c) => (
+                          <small key={c}>{c}</small>
+                        ))}
+                    </span>
+                  ) : (
+                    <p>{section.body}</p>
+                  )}
+                  <Provenance meta={section.meta} />
+                </section>
+              ))}
           </div>
         )}
       </div>

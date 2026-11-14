@@ -227,6 +227,9 @@ export function UniversePage() {
     }
   };
   const representativeCompanyId = account?.role === "representative" ? account.companyId : null;
+  const ownCompany = representativeCompanyId
+    ? companyList.find((c) => c.id === representativeCompanyId)
+    : undefined;
   useEffect(() => {
     if (representativeCompanyId && companyRepository.get(representativeCompanyId))
       setSelectedId(representativeCompanyId);
@@ -357,7 +360,10 @@ export function UniversePage() {
         <div className="page-heading">
           <div>
             <div className="eyebrow">
-              <span /> THE BLUE SCIENCE PARK ECOSYSTEM
+              <span />{" "}
+              {selected && focusedCompany
+                ? `COMPANY VIEW · ${focusedCompany.name.toUpperCase()}`
+                : "PARK VIEW · THE WHOLE BLUE SCIENCE PARK ECOSYSTEM"}
             </div>
             <h1>
               {view === "opportunities"
@@ -372,6 +378,32 @@ export function UniversePage() {
                 : "Discover companies, connect expertise, and find what’s next."}
             </p>
           </div>
+          <div className="view-switch" role="tablist" aria-label="Choose what the map shows">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={!selected}
+              data-active={!selected}
+              onClick={() => selected && back()}
+            >
+              <Globe2 size={14} /> Whole park
+              <small>{companyList.length} companies</small>
+            </button>
+            {(focusedCompany ?? ownCompany) && (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={Boolean(selected)}
+                data-active={Boolean(selected)}
+                className={`tone-${(focusedCompany ?? ownCompany)!.tone}`}
+                onClick={() => !selected && ownCompany && focus(ownCompany)}
+              >
+                <span className="view-dot" aria-hidden="true" />
+                {(focusedCompany ?? ownCompany)!.name}
+                <small>{selected ? "its opportunities & connections" : "your company view"}</small>
+              </button>
+            )}
+          </div>
           <div className="ecosystem-location">
             <MapPin size={15} /> Karlskrona, Sweden{" "}
             <span className="live-status">
@@ -381,7 +413,7 @@ export function UniversePage() {
         </div>
 
         <section
-          className={`universe-section ${selected ? "is-focused" : ""}`}
+          className={`universe-section ${selected ? `is-focused focus-tone-${selected.tone}` : "park-view"}`}
           aria-label="Interactive innovation ecosystem"
         >
           {view !== "reports" && view !== "briefing" && (
@@ -390,7 +422,7 @@ export function UniversePage() {
                 {selected ? (
                   <Button variant="ghost" onClick={back} className="back-button">
                     <ArrowLeft />
-                    Back to Universe
+                    Back to the whole park
                   </Button>
                 ) : (
                   <>
@@ -597,7 +629,9 @@ export function UniversePage() {
                       })}
                 </svg>
 
-                <div className={`ecosystem-centre ${selected ? "focused-centre" : ""}`}>
+                <div
+                  className={`ecosystem-centre ${selected ? `focused-centre tone-${selected.tone}` : ""}`}
+                >
                   <div className="centre-disc">
                     {selected ? (
                       <CompanyMark company={selected} />
@@ -997,7 +1031,7 @@ export function UniversePage() {
         key={account?.id ?? "guest"}
         company={focusedCompany ?? selected}
         onAction={applyAssistantAction}
-        shifted={Boolean(detail || matchFor)}
+        shifted={false}
         open={chatOpen}
         setOpen={setChatOpen}
       />
