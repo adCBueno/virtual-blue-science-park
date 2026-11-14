@@ -1,0 +1,266 @@
+[
+  {
+    "companyId": "nord",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "aether"
+    },
+    "explanation": "Both companies work with automation and iot.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "automation",
+          "iot"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "nord",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "modul"
+    },
+    "explanation": "Both companies work with automation and sensors.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "automation",
+          "sensors"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "ocean",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "modul"
+    },
+    "explanation": "Both companies work with sensors and sustainability.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "sensors",
+          "sustainability"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "ocean",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "baltic"
+    },
+    "explanation": "Both companies work with marine and sustainability.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "marine",
+          "sustainability"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "aether",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "nord"
+    },
+    "explanation": "Both companies work with automation and iot.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "automation",
+          "iot"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "aether",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "pulse"
+    },
+    "explanation": "Both companies work with iot and ai.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "iot",
+          "ai"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "modul",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "nord"
+    },
+    "explanation": "Both companies work with sensors and automation.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "sensors",
+          "automation"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "modul",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "ocean"
+    },
+    "explanation": "Both companies work with sensors and sustainability.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "sensors",
+          "sustainability"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "baltic",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "ocean"
+    },
+    "explanation": "Both companies work with marine and sustainability.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "marine",
+          "sustainability"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "baltic",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "modul"
+    },
+    "explanation": "Both companies work with sustainability.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "sustainability"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "pulse",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "aether"
+    },
+    "explanation": "Both companies work with ai and iot.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "ai",
+          "iot"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "pulse",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "nord"
+    },
+    "explanation": "Both companies work with iot.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "iot"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "ericsson",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "nord"
+    },
+    "explanation": "Both companies work with automation and iot.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "automation",
+          "iot"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  },
+  {
+    "companyId": "ericsson",
+    "target": {
+      "kind": "collaboration",
+      "targetCompanyId": "aether"
+    },
+    "explanation": "Both companies work with automation and iot.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "automation",
+          "iot"
+        ]
+      }
+    ],
+    "status": "suggested",
+    "isDemo": true
+  }
+]

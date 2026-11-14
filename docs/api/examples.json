@@ -1,0 +1,45 @@
+{
+  "recommendation": {
+    "companyId": "nord",
+    "target": {
+      "kind": "opportunity",
+      "opportunityId": "smart-funding"
+    },
+    "explanation": "Nord Sensor and the opportunity share expertise in sensors, automation and IoT.",
+    "factors": [
+      {
+        "kind": "sharedTechnology",
+        "values": [
+          "sensors",
+          "automation",
+          "iot"
+        ]
+      }
+    ],
+    "score": 87,
+    "status": "suggested",
+    "isDemo": true
+  },
+  "chatRequest": {
+    "question": "What funding is relevant to Nord Sensor?",
+    "companyId": "nord",
+    "history": []
+  },
+  "chatResponse": {
+    "answer": "The illustrative Smart industry innovation grant matches Nord Sensor’s expertise in sensors, automation and IoT.",
+    "action": {
+      "kind": "highlight",
+      "opportunityIds": [
+        "smart-funding"
+      ],
+      "companyIds": []
+    },
+    "sources": [
+      {
+        "label": "Vinnova",
+        "url": "https://www.vinnova.se/en/"
+      }
+    ],
+    "simulated": true
+  }
+}

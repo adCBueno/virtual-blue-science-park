@@ -1,11 +1,97 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-export const Route = createFileRoute("/reset-password")({ head: () => ({ meta: [{ title: "Reset Password · Blue Science Park" }, { name: "description", content: "Choose a new password for your Blue Science Park account using your secure recovery link." }, { property: "og:title", content: "Reset Password · Blue Science Park" }, { property: "og:description", content: "Secure account password recovery." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: Reset });
+export const Route = createFileRoute("/reset-password")({
+  head: () => ({
+    meta: [
+      { title: "Reset Password · Blue Science Park" },
+      {
+        name: "description",
+        content:
+          "Choose a new password for your Blue Science Park account using your secure recovery link.",
+      },
+      { property: "og:title", content: "Reset Password · Blue Science Park" },
+      { property: "og:description", content: "Secure account password recovery." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Reset,
+});
 function Reset() {
-  const [valid, setValid] = useState(false); const [password, setPassword] = useState(""); const [confirm, setConfirm] = useState(""); const [message, setMessage] = useState(""); const [busy, setBusy] = useState(false); const [done, setDone] = useState(false);
-  useEffect(() => { setValid(new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery"); }, []);
-  const submit = async (e: FormEvent) => { e.preventDefault(); if (password !== confirm) { setMessage("Passwords do not match."); return; } setBusy(true); const { error } = await supabase.auth.updateUser({ password }); setBusy(false); if (error) setMessage(error.message); else setDone(true); };
-  return <main className="auth-screen"><section className="auth-form-wrap"><span className="eyebrow">BLUE SCIENCE PARK</span><h1>Choose a new password.</h1>{done ? <><p>Your password has been updated.</p><Button asChild><Link to="/">Return to the universe</Link></Button></> : valid ? <form onSubmit={submit}><label className="editor-field">New password<input type="password" autoComplete="new-password" minLength={8} required value={password} onChange={e => setPassword(e.target.value)} /></label><label className="editor-field">Confirm password<input type="password" autoComplete="new-password" minLength={8} required value={confirm} onChange={e => setConfirm(e.target.value)} /></label>{message && <p role="alert" className="form-error">{message}</p>}<Button type="submit" disabled={busy}>Update password</Button></form> : <><p>Open the secure recovery link from your email to reset your password.</p><Button asChild variant="outline"><Link to="/auth">Back to login</Link></Button></>}</section></main>;
+  const [valid, setValid] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    setValid(new URLSearchParams(window.location.hash.slice(1)).get("type") === "recovery");
+  }, []);
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (password !== confirm) {
+      setMessage("Passwords do not match.");
+      return;
+    }
+    setBusy(true);
+    setDone(true);
+    setBusy(false);
+  };
+  return (
+    <main className="auth-screen">
+      <section className="auth-form-wrap">
+        <span className="eyebrow">BLUE SCIENCE PARK</span>
+        <h1>Choose a new password.</h1>
+        {done ? (
+          <>
+            <p>Demo recovery completed. No password was stored.</p>
+            <Button asChild>
+              <Link to="/">Return to the universe</Link>
+            </Button>
+          </>
+        ) : valid ? (
+          <form onSubmit={submit}>
+            <label className="editor-field">
+              New password
+              <input
+                type="password"
+                autoComplete="new-password"
+                minLength={8}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+            <label className="editor-field">
+              Confirm password
+              <input
+                type="password"
+                autoComplete="new-password"
+                minLength={8}
+                required
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+              />
+            </label>
+            {message && (
+              <p role="alert" className="form-error">
+                {message}
+              </p>
+            )}
+            <Button type="submit" disabled={busy}>
+              Update password
+            </Button>
+          </form>
+        ) : (
+          <>
+            <p>Password recovery is simulated in this demo.</p>
+            <Button asChild variant="outline">
+              <Link to="/auth">Back to login</Link>
+            </Button>
+          </>
+        )}
+      </section>
+    </main>
+  );
 }

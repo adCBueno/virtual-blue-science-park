@@ -1,46 +1,94 @@
-export const categories = ["Funding", "Events", "Workshops", "Networking", "Testing", "Collaborations"] as const;
+import { catalogue } from "@/data/catalogue";
+import {
+  categorySchema,
+  type Company as CompanyRecord,
+  type Opportunity as OpportunityRecord,
+} from "@/contracts/ecosystem";
+import visuals from "@/features/universe/desktop-node-visuals.json";
+export const categories = categorySchema.options;
 export type Category = (typeof categories)[number];
-export type Sector = "All sectors" | "Marine technology" | "Digital solutions" | "Industry & engineering";
-export type Company = {
-  id: string; name: string; mark: string; industry: string; sector: Sector;
-  description: string; tags: string[]; interests: Category[]; x: number; y: number; tone: string;
+export type Sector =
+  "All sectors" | "Marine technology" | "Digital solutions" | "Industry & engineering";
+export type Company = Pick<CompanyRecord, "id" | "industry" | "sector"> & {
+  name: string;
+  description: string;
+  tags: string[];
+  interests: Category[];
+  mark: string;
+  tone: string;
+  x: number;
+  y: number;
 };
-export type Opportunity = {
-  id: string; title: string; category: Category; summary: string; date: string;
-  source: string; url: string; requirements: string; tags: string[];
+export type Opportunity = Pick<OpportunityRecord, "id" | "title" | "category"> & {
+  summary: string;
+  date: string;
+  source: string;
+  url: string;
+  requirements: string;
+  tags: string[];
 };
-export const companies: [Company, Company, ...Company[]] = [
-  { id: "nord", name: "Nord Sensor", mark: "nord", industry: "Intelligent sensing", sector: "Industry & engineering", description: "Turning industrial data into better decisions. Nord Sensor develops connected sensors for smarter, more sustainable production.", tags: ["sensors", "automation", "iot"], interests: ["Testing", "Collaborations"], x: 30, y: 28, tone: "blue" },
-  { id: "ocean", name: "Ocean Collective", mark: "ocean", industry: "Marine technology", sector: "Marine technology", description: "A new perspective below the surface. Ocean Collective builds autonomous ocean monitoring systems for healthier seas.", tags: ["marine", "sensors", "sustainability"], interests: ["Funding", "Testing"], x: 66, y: 20, tone: "teal" },
-  { id: "aether", name: "Aether AI", mark: "aether", industry: "Applied artificial intelligence", sector: "Digital solutions", description: "Human-centred intelligence for real-world challenges. Aether AI helps organisations make sense of complex data.", tags: ["ai", "automation", "iot"], interests: ["Workshops", "Networking"], x: 83, y: 43, tone: "ink" },
-  { id: "modul", name: "Modul Works", mark: "modul", industry: "Manufacturing automation", sector: "Industry & engineering", description: "Flexible automation that works alongside people. Modul Works develops modular production systems for growing manufacturers.", tags: ["automation", "sensors", "sustainability"], interests: ["Collaborations", "Testing"], x: 75, y: 76, tone: "coral" },
-  { id: "baltic", name: "Baltic Blue", mark: "baltic", industry: "Sustainable ocean energy", sector: "Marine technology", description: "Clean energy, powered by the sea. Baltic Blue develops resilient renewable energy solutions for coastal communities.", tags: ["marine", "energy", "sustainability"], interests: ["Funding", "Events"], x: 44, y: 83, tone: "blue" },
-  { id: "pulse", name: "Pulse Health", mark: "pulse", industry: "Connected healthcare", sector: "Digital solutions", description: "Better care, closer to home. Pulse Health connects people and clinicians through accessible remote monitoring technology.", tags: ["health", "iot", "ai"], interests: ["Testing", "Networking"], x: 18, y: 65, tone: "teal" },
-  { id: "ericsson", name: "Connective", mark: "connective", industry: "Next-generation connectivity", sector: "Digital solutions", description: "Connecting ideas to the world. Connective develops secure wireless infrastructure for connected industry and maritime operations.", tags: ["iot", "marine", "automation"], interests: ["Events", "Collaborations"], x: 13, y: 43, tone: "ink" },
-];
-export const opportunities: Opportunity[] = [
-  { id: "smart-funding", title: "Smart industry innovation grant", category: "Funding", summary: "Support for early-stage industrial innovation, from connected prototypes to sustainable production.", date: "Demo deadline · 18 December 2026", source: "Vinnova", url: "https://www.vinnova.se/en/", requirements: "Swedish SMEs developing an innovative industrial solution. A project plan and co-financing proposal are required.", tags: ["sensors", "automation", "iot"] },
-  { id: "ocean-funding", title: "Blue economy innovation call", category: "Funding", summary: "Explore funding pathways for technologies that improve the resilience and sustainability of our oceans.", date: "Demo deadline · 22 January 2027", source: "Horizon Europe", url: "https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en", requirements: "A collaborative European research or innovation project with a measurable marine impact.", tags: ["marine", "energy", "sustainability"] },
-  { id: "digital-funding", title: "Digital innovation accelerator", category: "Funding", summary: "A development programme for responsible digital products and scalable AI solutions.", date: "Demo deadline · 15 January 2027", source: "Vinnova", url: "https://www.vinnova.se/en/", requirements: "An early-stage digital solution, a Swedish business entity, and a clear validation plan.", tags: ["ai", "health", "iot"] },
-  { id: "marine-event", title: "Marine Innovation Day", category: "Events", summary: "A meeting point for marine technology, offshore energy, and sustainable ocean innovation.", date: "Demo event · 11 February 2027", source: "Blue Science Park", url: "https://www.bluesciencepark.se/", requirements: "Open to organisations working in marine technology. Registration required.", tags: ["marine", "energy", "sustainability"] },
-  { id: "industry-event", title: "Connected Industry Forum", category: "Events", summary: "Meet the people shaping the next generation of intelligent manufacturing and connected systems.", date: "Demo event · 3 December 2026", source: "RISE", url: "https://www.ri.se/en", requirements: "Open to industry representatives, researchers, and technology providers.", tags: ["sensors", "automation", "iot"] },
-  { id: "ai-workshop", title: "From data to applied AI", category: "Workshops", summary: "A practical session on transforming sensor and operational data into useful AI applications.", date: "Demo workshop · 26 November 2026", source: "Tech Concept Lab", url: "https://www.bluesciencepark.se/", requirements: "Bring a real-world data challenge. No previous AI experience required.", tags: ["ai", "sensors", "iot", "automation"] },
-  { id: "ocean-workshop", title: "Designing for a circular ocean", category: "Workshops", summary: "Explore circular design methods for the next generation of sustainable marine products.", date: "Demo workshop · 2 December 2026", source: "Blue Science Park", url: "https://www.bluesciencepark.se/", requirements: "For marine innovators and sustainability teams. A product concept is helpful.", tags: ["marine", "energy", "sustainability"] },
-  { id: "network", title: "Innovation lunch at the park", category: "Networking", summary: "Fresh perspectives, shared challenges, and new connections across the local innovation community.", date: "Demo meetup · 25 November 2026", source: "Blue Science Park", url: "https://www.bluesciencepark.se/", requirements: "Open to ecosystem members and invited guests. Registration required.", tags: ["marine", "ai", "automation", "sensors", "health", "iot", "energy", "sustainability"] },
-  { id: "test-industry", title: "Connected systems testbed", category: "Testing", summary: "Validate connected sensors and automation systems in a real industrial environment with research expertise.", date: "Demo opportunity · Rolling applications", source: "RISE", url: "https://www.ri.se/en", requirements: "A working prototype and a defined testing challenge. Technical scoping is required before admission.", tags: ["sensors", "automation", "iot"] },
-  { id: "test-ocean", title: "Baltic Sea living lab", category: "Testing", summary: "Field-test marine monitoring and clean energy technology in a coastal test environment.", date: "Demo opportunity · Rolling applications", source: "Marine Technology Center", url: "https://www.bluesciencepark.se/", requirements: "A marine-ready prototype and a safety assessment. Test plans are reviewed individually.", tags: ["marine", "energy", "sustainability"] },
-  { id: "test-health", title: "Digital health pilot programme", category: "Testing", summary: "Connect your digital health product with clinical expertise and a supported pilot environment.", date: "Demo opportunity · Rolling applications", source: "RISE", url: "https://www.ri.se/en", requirements: "A digital health prototype, a privacy impact assessment, and a defined clinical use case.", tags: ["health", "ai"] },
-];
-export function relevance(company: Company, tags: string[], category: Category, interests: Category[]) {
-  const overlap = tags.filter(tag => company.tags.includes(tag)).length;
+function loadCompanies(): [Company, Company, ...Company[]] {
+  const [first, second, ...rest] = catalogue.companies.map((company) => {
+    const profile = catalogue.profiles.find((item) => item.companyId === company.id);
+    const visual = Object.entries(visuals).find(([id]) => id === company.id)?.[1];
+    if (!profile || !visual)
+      throw new Error("Missing company profile or visual configuration: " + company.id);
+    return {
+      ...company,
+      ...visual,
+      name: profile.name,
+      description: profile.description ?? "",
+      tags: profile.technologies,
+      interests: profile.opportunityInterests,
+    };
+  });
+  if (!first || !second) throw new Error("The prototype needs at least two companies.");
+  return [first, second, ...rest];
+}
+export const companies = loadCompanies();
+export const opportunities: Opportunity[] = catalogue.opportunities.map((item) => ({
+  id: item.id,
+  title: item.title,
+  category: item.category,
+  summary: item.description,
+  date: item.schedulingLabel ?? "",
+  source: item.sourceLabel,
+  url: item.sourceUrl,
+  requirements: item.eligibility,
+  tags: item.technologies,
+}));
+export function relevance(
+  company: Company,
+  tags: string[],
+  category: Category,
+  interests: Category[],
+) {
+  const overlap = tags.filter((tag) => company.tags.includes(tag)).length;
   return Math.min(99, 60 + overlap * 9 + (interests.includes(category) ? 12 : 0));
 }
-export function recommendations(company: Company, interests: Category[], category: Category | "All" = "All") {
-  return opportunities.filter(o => o.tags.some(t => company.tags.includes(t)) && (category === "All" || category === o.category))
-    .map(o => ({ ...o, score: relevance(company, o.tags, o.category, interests) }))
-    .sort((a, b) => Number(interests.includes(b.category)) - Number(interests.includes(a.category)) || b.score - a.score);
+export function recommendations(
+  company: Company,
+  interests: Category[],
+  category: Category | "All" = "All",
+) {
+  return opportunities
+    .filter(
+      (o) =>
+        o.tags.some((t) => company.tags.includes(t)) &&
+        (category === "All" || category === o.category),
+    )
+    .map((o) => ({ ...o, score: relevance(company, o.tags, o.category, interests) }))
+    .sort(
+      (a, b) =>
+        Number(interests.includes(b.category)) - Number(interests.includes(a.category)) ||
+        b.score - a.score,
+    );
 }
-export function collaborators(company: Company) {
-  return companies.filter(c => c.id !== company.id).map(c => ({ ...c, shared: c.tags.filter(t => company.tags.includes(t)) }))
-    .filter(c => c.shared.length > 0).sort((a, b) => b.shared.length - a.shared.length).slice(0, 2);
+export function collaborators(company: Company, directory: readonly Company[] = companies) {
+  return directory
+    .filter((c) => c.id !== company.id)
+    .map((c) => ({ ...c, shared: c.tags.filter((t) => company.tags.includes(t)) }))
+    .filter((c) => c.shared.length > 0)
+    .sort((a, b) => b.shared.length - a.shared.length)
+    .slice(0, 2);
 }

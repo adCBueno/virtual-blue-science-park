@@ -1,0 +1,4 @@
+[
+  { "id": "demo-nord", "name": "Demo preview", "role": "representative", "companyId": "nord" },
+  { "id": "demo-staff", "name": "Demo preview", "role": "staff", "companyId": null }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "id": "smart-funding",
+    "title": "Smart industry innovation grant",
+    "description": "Support for early-stage industrial innovation, from connected prototypes to sustainable production.",
+    "category": "Funding",
+    "technologies": [
+      "sensors",
+      "automation",
+      "iot"
+    ],
+    "industries": [],
+    "sourceLabel": "Vinnova",
+    "sourceUrl": "https://www.vinnova.se/en/",
+    "deadlineOn": "2026-12-18",
+    "schedulingLabel": "Demo deadline · 18 December 2026",
+    "eligibility": "Swedish SMEs developing an innovative industrial solution. A project plan and co-financing proposal are required.",
+    "isDemo": true
+  },
+  {
+    "id": "ocean-funding",
+    "title": "Blue economy innovation call",
+    "description": "Explore funding pathways for technologies that improve the resilience and sustainability of our oceans.",
+    "category": "Funding",
+    "technologies": [
+      "marine",
+      "energy",
+      "sustainability"
+    ],
+    "industries": [],
+    "sourceLabel": "Horizon Europe",
+    "sourceUrl": "https://research-and-innovation.ec.europa.eu/funding/funding-opportunities/funding-programmes-and-open-calls/horizon-europe_en",
+    "deadlineOn": "2027-01-22",
+    "schedulingLabel": "Demo deadline · 22 January 2027",
+    "eligibility": "A collaborative European research or innovation project with a measurable marine impact.",
+    "isDemo": true
+  },
+  {
+    "id": "digital-funding",
+    "title": "Digital innovation accelerator",
+    "description": "A development programme for responsible digital products and scalable AI solutions.",
+    "category": "Funding",
+    "technologies": [
+      "ai",
+      "health",
+      "iot"
+    ],
+    "industries": [],
+    "sourceLabel": "Vinnova",
+    "sourceUrl": "https://www.vinnova.se/en/",
+    "deadlineOn": "2027-01-15",
+    "schedulingLabel": "Demo deadline · 15 January 2027",
+    "eligibility": "An early-stage digital solution, a Swedish business entity, and a clear validation plan.",
+    "isDemo": true
+  },
+  {
+    "id": "marine-event",
+    "title": "Marine Innovation Day",
+    "description": "A meeting point for marine technology, offshore energy, and sustainable ocean innovation.",
+    "category": "Events",
+    "technologies": [
+      "marine",
+      "energy",
+      "sustainability"
+    ],
+    "industries": [],
+    "sourceLabel": "Blue Science Park",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "eventOn": "2027-02-11",
+    "schedulingLabel": "Demo event · 11 February 2027",
+    "eligibility": "Open to organisations working in marine technology. Registration required.",
+    "isDemo": true
+  },
+  {
+    "id": "industry-event",
+    "title": "Connected Industry Forum",
+    "description": "Meet the people shaping the next generation of intelligent manufacturing and connected systems.",
+    "category": "Events",
+    "technologies": [
+      "sensors",
+      "automation",
+      "iot"
+    ],
+    "industries": [],
+    "sourceLabel": "RISE",
+    "sourceUrl": "https://www.ri.se/en",
+    "eventOn": "2026-12-03",
+    "schedulingLabel": "Demo event · 3 December 2026",
+    "eligibility": "Open to industry representatives, researchers, and technology providers.",
+    "isDemo": true
+  },
+  {
+    "id": "ai-workshop",
+    "title": "From data to applied AI",
+    "description": "A practical session on transforming sensor and operational data into useful AI applications.",
+    "category": "Workshops",
+    "technologies": [
+      "ai",
+      "sensors",
+      "iot",
+      "automation"
+    ],
+    "industries": [],
+    "sourceLabel": "Tech Concept Lab",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "eventOn": "2026-11-26",
+    "schedulingLabel": "Demo workshop · 26 November 2026",
+    "eligibility": "Bring a real-world data challenge. No previous AI experience required.",
+    "isDemo": true
+  },
+  {
+    "id": "ocean-workshop",
+    "title": "Designing for a circular ocean",
+    "description": "Explore circular design methods for the next generation of sustainable marine products.",
+    "category": "Workshops",
+    "technologies": [
+      "marine",
+      "energy",
+      "sustainability"
+    ],
+    "industries": [],
+    "sourceLabel": "Blue Science Park",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "eventOn": "2026-12-02",
+    "schedulingLabel": "Demo workshop · 2 December 2026",
+    "eligibility": "For marine innovators and sustainability teams. A product concept is helpful.",
+    "isDemo": true
+  },
+  {
+    "id": "network",
+    "title": "Innovation lunch at the park",
+    "description": "Fresh perspectives, shared challenges, and new connections across the local innovation community.",
+    "category": "Networking",
+    "technologies": [
+      "marine",
+      "ai",
+      "automation",
+      "sensors",
+      "health",
+      "iot",
+      "energy",
+      "sustainability"
+    ],
+    "industries": [],
+    "sourceLabel": "Blue Science Park",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "eventOn": "2026-11-25",
+    "schedulingLabel": "Demo meetup · 25 November 2026",
+    "eligibility": "Open to ecosystem members and invited guests. Registration required.",
+    "isDemo": true
+  },
+  {
+    "id": "test-industry",
+    "title": "Connected systems testbed",
+    "description": "Validate connected sensors and automation systems in a real industrial environment with research expertise.",
+    "category": "Testing",
+    "technologies": [
+      "sensors",
+      "automation",
+      "iot"
+    ],
+    "industries": [],
+    "sourceLabel": "RISE",
+    "sourceUrl": "https://www.ri.se/en",
+    "schedulingLabel": "Demo opportunity · Rolling applications",
+    "eligibility": "A working prototype and a defined testing challenge. Technical scoping is required before admission.",
+    "isDemo": true
+  },
+  {
+    "id": "test-ocean",
+    "title": "Baltic Sea living lab",
+    "description": "Field-test marine monitoring and clean energy technology in a coastal test environment.",
+    "category": "Testing",
+    "technologies": [
+      "marine",
+      "energy",
+      "sustainability"
+    ],
+    "industries": [],
+    "sourceLabel": "Marine Technology Center",
+    "sourceUrl": "https://www.bluesciencepark.se/",
+    "schedulingLabel": "Demo opportunity · Rolling applications",
+    "eligibility": "A marine-ready prototype and a safety assessment. Test plans are reviewed individually.",
+    "isDemo": true
+  },
+  {
+    "id": "test-health",
+    "title": "Digital health pilot programme",
+    "description": "Connect your digital health product with clinical expertise and a supported pilot environment.",
+    "category": "Testing",
+    "technologies": [
+      "health",
+      "ai"
+    ],
+    "industries": [],
+    "sourceLabel": "RISE",
+    "sourceUrl": "https://www.ri.se/en",
+    "schedulingLabel": "Demo opportunity · Rolling applications",
+    "eligibility": "A digital health prototype, a privacy impact assessment, and a defined clinical use case.",
+    "isDemo": true
+  }
+]

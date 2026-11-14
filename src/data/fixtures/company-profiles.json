@@ -1,0 +1,114 @@
+[
+  {
+    "companyId": "nord",
+    "name": "Nord Sensor",
+    "description": "Turning industrial data into better decisions. Nord Sensor develops connected sensors for smarter, more sustainable production.",
+    "technologies": [
+      "sensors",
+      "automation",
+      "iot"
+    ],
+    "opportunityInterests": [
+      "Testing",
+      "Collaborations"
+    ],
+    "evidence": {},
+    "visibility": "published"
+  },
+  {
+    "companyId": "ocean",
+    "name": "Ocean Collective",
+    "description": "A new perspective below the surface. Ocean Collective builds autonomous ocean monitoring systems for healthier seas.",
+    "technologies": [
+      "marine",
+      "sensors",
+      "sustainability"
+    ],
+    "opportunityInterests": [
+      "Funding",
+      "Testing"
+    ],
+    "evidence": {},
+    "visibility": "published"
+  },
+  {
+    "companyId": "aether",
+    "name": "Aether AI",
+    "description": "Human-centred intelligence for real-world challenges. Aether AI helps organisations make sense of complex data.",
+    "technologies": [
+      "ai",
+      "automation",
+      "iot"
+    ],
+    "opportunityInterests": [
+      "Workshops",
+      "Networking"
+    ],
+    "evidence": {},
+    "visibility": "published"
+  },
+  {
+    "companyId": "modul",
+    "name": "Modul Works",
+    "description": "Flexible automation that works alongside people. Modul Works develops modular production systems for growing manufacturers.",
+    "technologies": [
+      "automation",
+      "sensors",
+      "sustainability"
+    ],
+    "opportunityInterests": [
+      "Collaborations",
+      "Testing"
+    ],
+    "evidence": {},
+    "visibility": "published"
+  },
+  {
+    "companyId": "baltic",
+    "name": "Baltic Blue",
+    "description": "Clean energy, powered by the sea. Baltic Blue develops resilient renewable energy solutions for coastal communities.",
+    "technologies": [
+      "marine",
+      "energy",
+      "sustainability"
+    ],
+    "opportunityInterests": [
+      "Funding",
+      "Events"
+    ],
+    "evidence": {},
+    "visibility": "published"
+  },
+  {
+    "companyId": "pulse",
+    "name": "Pulse Health",
+    "description": "Better care, closer to home. Pulse Health connects people and clinicians through accessible remote monitoring technology.",
+    "technologies": [
+      "health",
+      "iot",
+      "ai"
+    ],
+    "opportunityInterests": [
+      "Testing",
+      "Networking"
+    ],
+    "evidence": {},
+    "visibility": "published"
+  },
+  {
+    "companyId": "ericsson",
+    "name": "Connective",
+    "description": "Connecting ideas to the world. Connective develops secure wireless infrastructure for connected industry and maritime operations.",
+    "technologies": [
+      "iot",
+      "marine",
+      "automation"
+    ],
+    "opportunityInterests": [
+      "Events",
+      "Collaborations"
+    ],
+    "evidence": {},
+    "visibility": "published"
+  }
+]
