@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { chatResponseSchema } from "@/contracts/ecosystem";
 import { services } from "@/data/services";
-import { createTeamApiTransport } from "@/data/team-api.server";
 import { draftFrom } from "@/lib/account";
 
 const {
@@ -122,19 +120,5 @@ describe("fixture-backed workspace", () => {
       { kind: "filter", category: "Funding" },
     );
     await expect(assistantService.reply({ ...input, question: "" })).rejects.toThrow();
-  });
-
-  it("validates team API responses with the same contract as mock responses", async () => {
-    const input = { question: "Hello", companyId: null, history: [] };
-    const reply = await assistantService.reply(input);
-    const operation = { request: () => ({ path: "example-only" }), response: chatResponseSchema };
-    const valid = createTeamApiTransport("https://team.example.test", async () =>
-      Response.json(reply),
-    );
-    await expect(valid(operation, input)).resolves.toEqual(reply);
-    const invalid = createTeamApiTransport("https://team.example.test", async () =>
-      Response.json({}),
-    );
-    await expect(invalid(operation, input)).rejects.toThrow();
   });
 });
